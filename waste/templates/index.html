@@ -1,0 +1,79 @@
+{% extends 'base.html'%}
+{%block head%}
+<title>Home</title>
+<style>
+    .feature-section {
+        margin-top: 50px;
+    }
+
+    .feature-item {
+        text-align: center;
+    }
+
+    .feature-image {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-content {
+        padding: 20px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .feature-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #1d3557;
+    }
+
+    .feature-description {
+        font-size: 16px;
+        color: #333;
+    }
+
+    @media (max-width: 992px) {
+        .mb-4 {
+            margin-bottom: 1.5rem !important;
+        }
+    }
+</style>
+{%endblock%}
+{% block content %}
+<section id="home">
+    <div>
+        <h2>Smart Waste Collector</h2>
+        <p>The smart way to schedule your waste collection</p>       
+            <div>
+                <form action="/resend_confirmation">
+                    <button class="button button-blue">Resend Confirmation</button>
+                </form>
+            </div>
+    </div>
+</section>
+<section>
+    <h3>Our Types of Users</h3>
+    <div>
+        <h4>Household Users</h4>
+        <p>These are the individual households that book for waste collection services through our paltform.</p>
+        <a href="/house/register">Register as Household</a><br>
+        <a href="/house/login">Login as Household</a>
+    </div>
+    <div>
+        <h4>Waste Collector Users</h4>
+        <p>Collector users are the ones who do the actual collections.<br>They work for waste collection companies.</p>
+        <a href="">Register as Collector</a><br>
+        <a href="">Login as Collector</a>
+    </div>
+    <div>
+        <h4>Adminstration Users</h4>
+        <p>These are the management employees of different companies.<br>They work for waste collection companies, but they handle the company's profile on our platform.</p>
+        <a href="/admin/register">Register as Admin</a><br>
+        <a href="/admin/login">Login as Admin</a>
+    </div>
+</section>
+{% endblock %}
