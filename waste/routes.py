@@ -23,21 +23,32 @@ def register_routes(app):
         try:
             email = confirm_token(token)
         except:
-            flash_message('The confirmation link is invalid or has expired.', 'danger')
+            flash('The confirmation link is invalid or has expired.', 'danger')
             return redirect(url_for('resend_confirmation'))
 
-        admin_user = AdminUser.query.filter_by(email=email).first_or_404()
-        house_user = HouseUser.query.filter_by(email=email).first_or_404()
-        collector_user = CollectorUser.query.filter_by(email=email).first_or_404()
-        users = [(admin_user), (house_user), (collector_user)]
+        # Check for the user in all user types
+        admin_user = AdminUser.query.filter_by(adminemail=email).first()
+        house_user = HouseUser.query.filter_by(houseemail=email).first()
+        collector_user = CollectorUser.query.filter_by(collectoremail=email).first()
+        users = [admin_user, house_user, collector_user]
+
         for user in users:
-            if user.confirmed:
-                flash_message('Account already confirmed. Please log in.', 'success')
-            else:
-                user.confirmed = True
-                db.session.commit()
-                flash_message('You have confirmed your account. Thanks!', 'success')
-        return redirect(url_for('admin_login'))
+            if user:  # Check if user exists
+                if user.confirmed:
+                    flash('Account already confirmed. Please log in.', 'success')
+                else:
+                    user.confirmed = True
+                    db.session.commit()
+                    flash('You have confirmed your account. Thanks!', 'success')
+                    if user == 'admin_user':
+                        return redirect(url_for('admin_login'))
+                    elif user=='house_user':
+                        return redirect(url_for('login'))
+                    else:
+                        return redirect(url_for('collector_login'))
+        
+        flash('No account found for this email.', 'danger')
+        return redirect(url_for('resend_confirmation'))
     
     # Re-send Confirmation Route
     @app.route('/resend_confirmation', methods=['GET', 'POST'])
@@ -45,16 +56,25 @@ def register_routes(app):
         form = ResendConfirmationForm()
         if form.validate_on_submit():
             email = form.email.data
-            admin_user = AdminUser.query.filter_by(email=email).first()
-            house_user = HouseUser.query.filter_by(email=email).first()
-            collector_user = CollectorUser.query.filter_by(email=email).first()
-            users = [(admin_user), (house_user), (collector_user)]
-            for user in users:
+            admin_user = AdminUser.query.filter_by(adminemail=email).first()
+            house_user = HouseUser.query.filter_by(houseemail=email).first()
+            collector_user = CollectorUser.query.filter_by(collectoremail=email).first()
+            users = {'admin_user': admin_user, 'house_user': house_user, 'collector_user': collector_user}
+            
+            for role, user in users.items():
                 if user and not user.confirmed:
-                    send_confirmation_email(user.email)
-                    flash_message('A new confirmation email has been sent.', 'success')
-                else:
-                    flash_message('Email not found or already confirmed.', 'danger')
+                    if role == 'admin_user':
+                        send_confirmation_email(user.adminemail)
+                    elif role == 'house_user':
+                        send_confirmation_email(user.houseemail)
+                    else:
+                        send_confirmation_email(user.collectoremail)
+                    
+                    flash('A new confirmation email has been sent.', 'success')
+                    break
+            else:
+                flash('Email not found or already confirmed.', 'danger')
+        
         return render_template('resend_confirmation.html', form=form)
     
     #Forgot Password Route
@@ -73,6 +93,7 @@ def register_routes(app):
                 flash_message('Password updated successfully.', 'success')
                 return redirect(url_for('login'))
         return render_template('forgot.html', form=form)
+    
     ########### Admin APIs##################################################
     # Admin Register route
     @app.route('/admin/register', methods=['GET', 'POST'])
@@ -131,6 +152,7 @@ def register_routes(app):
         return render_template('admin/dashboard.html')
     
     ########### House APIs##################################################
+    
     # House register route
     @app.route('/house/register', methods=['GET', 'POST'])
     def register():
@@ -141,21 +163,21 @@ def register_routes(app):
             firstname = form.firstname.data
             secondname = form.secondname.data
             username = form.username.data
-            email = form.email.data
+            houseemail = form.email.data
             password = form.password.data
             role = 'Household'
 
             #Check if the user exists
-            existing_user = HouseUser.query.filter((HouseUser.username == username) | (HouseUser.email == email)).first()
+            existing_user = HouseUser.query.filter((HouseUser.username == username) | (HouseUser.houseemail == houseemail)).first()
 
             if existing_user:
                 flash_message('Username or email already in use. Try again', 'danger')
-                return render_template('register.html', form=form)
+                return render_template('house/register.html', form=form)
             else:
-                new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, email=email, role=role, password=password, confirmed=False)
+                new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, role=role, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
-                send_confirmation_email(new_user.email)
+                send_confirmation_email(new_user.houseemail)
                 flash_message('A confirmation email has been sent via email. Please confirm your email to log in.', 'success')
                 return redirect(url_for('login'))
             
@@ -210,5 +232,10 @@ def register_routes(app):
     @login_required
     def collector_dashboard():
         return render_template('collector/dashboard.html')
+    
+    #Collector Login
+    @app.route('/collector/login')
+    def collector_login():
+        return "Collector Login"
 
 
