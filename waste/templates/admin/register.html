@@ -3,33 +3,31 @@
 <title>Admin Register</title>
 {% endblock %}
 {% block content %}
-<main>
-    <div class="container">
-        <h2>Admin Register</h2>
-        <form id="registerForm" method="POST" action="/admin/register" novalidate>
-            {{ form.hidden_tag() }}
+<div class="container">
+    <h2>Admin Register</h2>
+    <form id="registerForm" method="POST" action="/admin/register" novalidate>
+        {{ form.hidden_tag() }}
 
-            <div class="form-group">
-                {{ form.companyname.label }}
-                {{ form.companyname(class="form-control", placeholder="Enter your company name") }}
-                <div class="invalid-feedback">Please enter a valid company name.</div>
-            </div>
+        <div class="form-group">
+            {{ form.companyname.label }}
+            {{ form.companyname(class="form-control", placeholder="Enter your company name") }}
+            <div class="invalid-feedback">Please enter a valid company name.</div>
+        </div>
 
-            <div class="form-group">
-                {{ form.email.label }}
-                {{ form.email(class="form-control", placeholder="Enter your company email") }}
-                <div class="invalid-feedback">Please enter a valid email address.</div>
-            </div>
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(class="form-control", placeholder="Enter your company email") }}
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
 
-            <div class="form-group">
-                {{ form.password.label }}
-                {{ form.password(class="form-control", placeholder="Enter your password") }}
-                <div class="invalid-feedback">Please enter a valid password.</div>
-            </div>
-            {{ form.submit(class="btn btn-primary") }}
-        </form>
-    </div>
-</main>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control", placeholder="Enter your password") }}
+            <div class="invalid-feedback">Please enter a valid password.</div>
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
 
 <style>
     body {

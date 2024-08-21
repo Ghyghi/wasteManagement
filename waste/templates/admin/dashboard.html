@@ -4,25 +4,47 @@
 <title>Admin Dashboard</title>
 {% endblock %}
 {% block header %}
-
+    {% include 'admin/navbar.html' %}
 {% endblock %}
 {% block content %}
 <h1>Admin Dashboard</h1>
 <section>
     <div>
-        <h3>Number of confirmed employees</h3>
+        <h3>Your Company profile</h3>
+        <dl>
+            <dt>Company Name</dt>
+                <dd>{{company.companyname}}</dd>
+            <dt>Company ID</dt>
+                <dd>{{company.admin_id}}</dd>
+        </dl>
     </div>
-    <div>
-        <h3>Approval pending employees</h3>
-    </div>
-    <div>
-        <h3>Total Waste Collected</h3>
-    </div>
-    <div>
-        <h3>Active Collectors</h3>
-    </div>
-    <div>
-        <h3>Pending tasks employees</h3>
-    </div>
+</section>
+<section id="your-routes" class="section">
+    <h3>Your Routes</h3>
+    {% if routes|length == 0 %}
+        <p>You don't have any routes yet.</p>
+        <p>Create a route first.</p>
+    {% else %}
+        <table class="routes-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Company</th>
+                    <th>Routes</th>
+                    <th>Days</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for route in routes %}
+                <tr>
+                    <td>{{ route.route_id }}</td>
+                    <td>{{ route.company_id }}</td>
+                    <td>{{ route.route_name }}</td>
+                    <td>{{ route.pickup_days }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 </section>
 {% endblock %}

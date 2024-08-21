@@ -46,3 +46,11 @@ class CollectorUser(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.collector_id)
+    
+class Routes(db.Model):
+    __tablename__ = 'routes'
+    route_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_profile_adminuser_adminid'), nullable=False)
+    route_name = db.Column(db.String(255), unique=True, nullable=False)
+    pickup_days = db.Column(db.String(255), nullable=False)
+

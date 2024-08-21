@@ -107,12 +107,12 @@ def register_routes(app):
             
             #Check if the user exists
 
-            existing_user = AdminUser.query.filter((AdminUser.companyname == companyname) | (AdminUser.email == email)).first()
+            existing_user = AdminUser.query.filter((AdminUser.companyname == companyname) | (AdminUser.adminemail == email)).first()
             if existing_user:
                 flash_message('Company name or email already in use', 'danger')
                 return redirect(url_for('admin_register'))
             else:
-                new_user = AdminUser(companyname = companyname, email = email, password = password, role=role, confirmed = False)
+                new_user = AdminUser(companyname = companyname, adminemail = email, password = password, role=role, confirmed = False)
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('A confirmaton email has been sent to you email. Please confirm before you proceed to login,', 'success')
@@ -149,8 +149,43 @@ def register_routes(app):
     @app.route('/admin/dashboard')
     @login_required
     def admin_dashboard():
-        return render_template('admin/dashboard.html')
+
+        # Get the admin_id of the currently logged-in admin
+        admin_id = current_user.get_id()
+
+        #Get the company routes and profile
+        routes = Routes.query.filter_by(company_id=admin_id).all()
+        company = AdminUser.query.filter_by(admin_id=admin_id).first()
+        return render_template('admin/dashboard.html', routes=routes, company=company)
     
+    # Register a route
+    @app.route('/route/register', methods=['GET', 'POST'])
+    @login_required
+    def route_register():
+        form = Routess()
+        if form.validate_on_submit():
+            # Handle the form submission
+            company = form.company.data
+            days = form.days.data
+            district = form.district.data
+            sector = form.sector.data
+
+            route_name = f"{sector},{district}"
+
+            #Check whether the route exists
+            existing_route = Routes.query.filter(Routes.route_name == route_name)
+
+            if existing_route:
+                flash_message('Route already exists', 'warning')
+                return redirect(url_for(route_register))
+            else:
+                new_route = Routes(company_id=company, pickup_days=days, route_name=route_name)
+                db.session.add(new_route)
+                db.session.commit()
+                flash_message('Route registered successfully,', 'success')
+                print(f'{route_name} registered with to {company}')
+                return redirect(url_for('admin_dashboard'))
+        return render_template('admin/routes.html', form=form)
     ########### House APIs##################################################
     
     # House register route
@@ -216,7 +251,7 @@ def register_routes(app):
                         return redirect(url_for('login'))
             else:
                 flash_message('Invalid username, role, or password. Please try again.', 'danger')
-                return render_template('login.html', form=form)
+                return render_template('house/login.html', form=form)
         return render_template('house/login.html', form=form)
     
     # House Dashboard Route

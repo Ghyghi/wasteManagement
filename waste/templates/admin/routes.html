@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Route Register</title>
+{% endblock %}
+{% block content %}
+    <form method="POST" action="{{ url_for('route_register') }}" novalidate>
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            <label for="{{ form.company.id }}">{{ form.company.label }}</label>
+            {{ form.company(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.days.id }}">{{ form.days.label }}</label>
+            {{ form.days(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.district.id }}">{{ form.district.label }}</label>
+            {{ form.district(class_="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.sector.id }}">{{ form.sector.label }}</label>
+            {{ form.sector(class_="form-control") }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+    {% block script %}
+        <script>
+            const sectors = {
+                'Gasabo': [
+                    {'value': 'Gisozi', 'label': 'Gisozi'},
+                    {'value': 'Kacyiru', 'label': 'Kacyiru'},
+                    {'value': 'Kimironko', 'label': 'Kimironko'},
+                    {'value': 'Remera', 'label': 'Remera'}
+                ],
+                'Kicukiro': [
+                    {'value': 'Gikondo', 'label': 'Gikondo'},
+                    {'value': 'Kanombe', 'label': 'Kanombe'},
+                    {'value': 'Kicukiro', 'label': 'Kicukiro'}
+                ],
+                'Nyarugenge': [
+                    {'value': 'Muhima', 'label': 'Muhima'},
+                    {'value': 'Nyamirambo', 'label': 'Nyamirambo'},
+                    {'value': 'Kimisagara', 'label': 'Kimisagara'}
+                ]
+            };
+
+            document.querySelector('[name=district]').addEventListener('change', function() {
+                const district = this.value;
+                const sectorSelect = document.querySelector('[name=sector]');
+                sectorSelect.innerHTML = ''; // Clear existing options
+
+                if (district in sectors) {
+                    sectors[district].forEach(function(sector) {
+                        let option = document.createElement('option');
+                        option.value = sector.value;
+                        option.textContent = sector.label;
+                        sectorSelect.appendChild(option);
+                    });
+                }
+            });
+        </script>
+    {% endblock %}
+{% endblock %}

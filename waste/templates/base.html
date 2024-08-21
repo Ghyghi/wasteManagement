@@ -23,6 +23,7 @@
             {% endwith %}
             {% block content %}{% endblock %}
         </div>
+        
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() {
@@ -33,6 +34,7 @@
                 }, 5000); // 5000ms = 5 seconds
             });
         </script>
+        {% block script %}{% endblock %}
     </main>
     <footer> &copy;Ghislaine 2024</footer>
     

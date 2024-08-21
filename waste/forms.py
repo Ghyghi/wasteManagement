@@ -7,12 +7,45 @@ roles = [
     ('Household' , 'Household')
 ]
 
+days_of_the_week = [
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday')
+]
+
+districts =[
+    ('Gasabo', 'Gasabo'),
+    ('Kicukiro', 'Kicukiro'),
+    ('Nyarugenge', 'Nyarugenge')
+]
+
+gasabo_sectors = [
+    ('Gisozi', 'Gisozi'),
+    ('Kacyiru', 'Kacyiru'),
+    ('Kimironko', 'Kimironko'),
+    ('Remera', 'Remera')
+]
+
+kicukiro_sectors = [
+    ('Gikondo', 'Gikondo'),
+    ('Kanombe', 'Kanombe'),
+    ('Kicukiro', 'Kicukiro')
+]
+
+nyarugenge_sectors = [
+    ('Muhima', 'Muhima'),
+    ('Nyamirambo', 'Nyamirambo'),
+    ('Kimisagara', 'Kimisagara')
+]
 class AdminRegisterForm(FlaskForm):
     companyname = StringField('Company Name', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Register')
-
 class AdminLoginForm(FlaskForm):
     companyname = StringField('Company Name', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
@@ -38,3 +71,8 @@ class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     submit = SubmitField('Reset Password')
+class Routess(FlaskForm):
+    company = IntegerField('Company ID', validators=[InputRequired()])
+    days = SelectField('Pickup Day', choices=days_of_the_week, validators=[InputRequired()])
+    district = SelectField('Choose District', choices=districts, validators=[InputRequired()])
+    sector = SelectField('Choose Sector', choices=[], validators=[InputRequired()])
