@@ -80,6 +80,11 @@ class RoutesForm(FlaskForm):
     sector = SelectField('Choose Sector', choices=sectors, validators=[InputRequired()])
     frequency = SelectField('Pickup Frequency', choices=freq, validators=[InputRequired()])
     submit = SubmitField('Register Route')
+class UpdateRouteForm(FlaskForm):
+    pickup_days = SelectField('Pickup Day', choices=days_of_the_week, validators=[InputRequired()])
+    frequency = SelectField('Pickup Frequency', choices=freq, validators=[InputRequired()])
+    submit = SubmitField('Update Route')
+
 class CollectorRegisterForm(FlaskForm):
     firstname = StringField('First Name', validators=[InputRequired()])
     secondname = StringField('Second Name', validators=[InputRequired()])

@@ -154,7 +154,7 @@ def register_routes(app):
         admin_id = current_user.get_id()
 
         #Get the company routes and profile
-        routes = Routes.query.filter_by(company_id=admin_id).all()
+        routes = Routes.query.filter_by(company_id=admin_id).limit(5).all()
         company = AdminUser.query.filter_by(admin_id=admin_id).first()
         return render_template('admin/dashboard.html', routes=routes, company=company)
     
@@ -173,7 +173,7 @@ def register_routes(app):
 
             route_name = f"{sector},{district}"
 
-            print(f"Comany: {company_id} days: {pickup_days} route: {route_name} frequency {frequency}")
+            print(f"Comany: {company_id} days: {pickup_days} route: {route_name} frequency: {frequency}")
 
             #Check whether the route exists
             existing_route = Routes.query.filter(Routes.route_name == route_name).first()
@@ -189,6 +189,60 @@ def register_routes(app):
                 print(f'{route_name} registered with to {company_id}')
                 return redirect(url_for('admin_dashboard'))
         return render_template('admin/routes.html', form=form)
+    
+    # View Routes
+    @app.route('/route/view')
+    @login_required
+    def view_route():
+        # Get the admin_id of the currently logged-in admin
+        admin_id = current_user.get_id()
+        #Get the company routes and profile
+        routes = Routes.query.filter_by(company_id=admin_id).all()
+        return render_template('/admin/viewRoutes.html', routes=routes)
+    
+    #View route details
+    @app.route('/route/view/<int:route_id>', methods=['GET','POST'])
+    @login_required
+    def route_details(route_id):
+        route = Routes.query.get_or_404(route_id)
+        return render_template('/admin/routeDetails.html', route=route)
+    
+    #Delete route
+    @app.route('/route/delete/<int:route_id>', methods=['GET','POST'])
+    @login_required
+    def delete_route(route_id):
+        route = Routes.query.get_or_404(route_id)
+        db.session.delete(route)
+        db.session.commit()
+        flash_message('Route deleted successfully!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    
+    #Update route
+    @app.route('/route/update/<int:route_id>', methods=['GET','POST'])
+    @login_required
+    def update_route(route_id):
+        route = Routes.query.filter_by(route_id=route_id).first()
+
+        if not route:
+            flash('Route not found.', 'danger')
+            return redirect(url_for('admin_dashboard'))
+        
+        form = UpdateRouteForm(obj=route)
+
+        if form.validate_on_submit():
+            route.pickup_days = form.pickup_days.data
+            route.frequency = form.frequency.data
+
+            try:
+                db.session.commit()
+                flash('Route updated successfully.', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error updating route: {e}', 'danger')
+
+            return redirect(url_for('admin_dashboard'))
+        return render_template('/admin/updateRoute.html', form=form, route=route)
+
     ########### House APIs##################################################
     
     # House register route

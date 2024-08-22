@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Route details{% endblock %}
+{% block header %}
+    {% include 'admin/navbar.html' %}
+{% endblock %}
+{% block content %}
+<div class="header">
+    <h1>{{ route.route_name }}</h1>
+    <p>The following are the details of the route:</p>
+</div>
+<div class="route-info">
+    <h3>Route Information</h3>
+    <p><strong>Route ID:</strong> {{ route.route_id }}</p>
+    <p><strong>Route Name:</strong> {{ route.route_name }}</p>
+    <p><strong>Company ID:</strong> {{ route.company_id }}</p>
+    <p><strong>Pickup Days:</strong> {{ route.pickup_days }}</p>
+    <p><strong>Frequency:</strong> {{ route.frequency }}</p>
+</div>
+<div class="actions">
+    <h3>Actions</h3>
+
+    <a href="{{ url_for('delete_route', route_id=route.route_id) }}" class="action-btn delete-btn">Delete Route</a>
+    <a href="{{ url_for('update_route', route_id=route.route_id) }}" class="action-btn schedule-btn">Update Route</a>
+
+</div>
+{% endblock %}
