@@ -26,6 +26,11 @@
             {{ form.sector(class_="form-control") }}
         </div>
 
+        <div class="form-group">
+            <label for="{{ form.frequency.id }}">{{ form.frequency.label }}</label>
+            {{ form.frequency(class_="form-control") }}
+        </div>
+
         {{ form.submit(class="btn btn-primary") }}
     </form>
     

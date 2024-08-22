@@ -169,10 +169,11 @@ def register_routes(app):
             pickup_days = form.days.data
             district = form.district.data
             sector = form.sector.data
+            frequency = form.frequency.data
 
             route_name = f"{sector},{district}"
 
-            print(f"Comany: {company_id} days: {pickup_days} route: {route_name}")
+            print(f"Comany: {company_id} days: {pickup_days} route: {route_name} frequency {frequency}")
 
             #Check whether the route exists
             existing_route = Routes.query.filter(Routes.route_name == route_name).first()
@@ -181,7 +182,7 @@ def register_routes(app):
                 flash_message('Route already exists', 'warning')
                 return redirect(url_for('route_register'))
             else:
-                new_route = Routes(company_id=company_id, pickup_days=pickup_days, route_name=route_name)
+                new_route = Routes(company_id=company_id, pickup_days=pickup_days, route_name=route_name, frequency=frequency)
                 db.session.add(new_route)
                 db.session.commit()
                 flash_message('Route registered successfully,', 'success')

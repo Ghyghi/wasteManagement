@@ -41,6 +41,7 @@ nyarugenge_sectors = [
     ('Nyamirambo', 'Nyamirambo'),
     ('Kimisagara', 'Kimisagara')
 ]
+freq = [('Monthly', 'Monthly'), ('Weekly', 'Weekly')]
 sectors = gasabo_sectors + kicukiro_sectors + nyarugenge_sectors
 class AdminRegisterForm(FlaskForm):
     companyname = StringField('Company Name', validators=[InputRequired(), Length(min=4, max=25)])
@@ -77,6 +78,7 @@ class RoutesForm(FlaskForm):
     days = SelectField('Pickup Day', choices=days_of_the_week, validators=[InputRequired()])
     district = SelectField('Choose District', choices=districts, validators=[InputRequired()])
     sector = SelectField('Choose Sector', choices=sectors, validators=[InputRequired()])
+    frequency = SelectField('Pickup Frequency', choices=freq, validators=[InputRequired()])
     submit = SubmitField('Register Route')
 class CollectorRegisterForm(FlaskForm):
     firstname = StringField('First Name', validators=[InputRequired()])

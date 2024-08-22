@@ -53,4 +53,5 @@ class Routes(db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_profile_adminuser_adminid'), nullable=False)
     route_name = db.Column(db.String(255), unique=True, nullable=False)
     pickup_days = db.Column(db.String(255), nullable=False)
+    frequency = db.Column(db.String(255), nullable=False)
 
