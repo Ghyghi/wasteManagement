@@ -26,44 +26,42 @@
             {{ form.sector(class_="form-control") }}
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        {{ form.submit(class="btn btn-primary") }}
     </form>
     
-    {% block script %}
-        <script>
-            const sectors = {
-                'Gasabo': [
-                    {'value': 'Gisozi', 'label': 'Gisozi'},
-                    {'value': 'Kacyiru', 'label': 'Kacyiru'},
-                    {'value': 'Kimironko', 'label': 'Kimironko'},
-                    {'value': 'Remera', 'label': 'Remera'}
-                ],
-                'Kicukiro': [
-                    {'value': 'Gikondo', 'label': 'Gikondo'},
-                    {'value': 'Kanombe', 'label': 'Kanombe'},
-                    {'value': 'Kicukiro', 'label': 'Kicukiro'}
-                ],
-                'Nyarugenge': [
-                    {'value': 'Muhima', 'label': 'Muhima'},
-                    {'value': 'Nyamirambo', 'label': 'Nyamirambo'},
-                    {'value': 'Kimisagara', 'label': 'Kimisagara'}
-                ]
-            };
+    <script>
+        const sectors = {
+            'Gasabo': [
+                {'value': 'Gisozi', 'label': 'Gisozi'},
+                {'value': 'Kacyiru', 'label': 'Kacyiru'},
+                {'value': 'Kimironko', 'label': 'Kimironko'},
+                {'value': 'Remera', 'label': 'Remera'}
+            ],
+            'Kicukiro': [
+                {'value': 'Gikondo', 'label': 'Gikondo'},
+                {'value': 'Kanombe', 'label': 'Kanombe'},
+                {'value': 'Kicukiro', 'label': 'Kicukiro'}
+            ],
+            'Nyarugenge': [
+                {'value': 'Muhima', 'label': 'Muhima'},
+                {'value': 'Nyamirambo', 'label': 'Nyamirambo'},
+                {'value': 'Kimisagara', 'label': 'Kimisagara'}
+            ]
+        };
 
-            document.querySelector('[name=district]').addEventListener('change', function() {
-                const district = this.value;
-                const sectorSelect = document.querySelector('[name=sector]');
-                sectorSelect.innerHTML = ''; // Clear existing options
+        document.querySelector('[name=district]').addEventListener('change', function() {
+            const district = this.value;
+            const sectorSelect = document.querySelector('[name=sector]');
+            sectorSelect.innerHTML = ''; // Clear existing options
 
-                if (district in sectors) {
-                    sectors[district].forEach(function(sector) {
-                        let option = document.createElement('option');
-                        option.value = sector.value;
-                        option.textContent = sector.label;
-                        sectorSelect.appendChild(option);
-                    });
-                }
-            });
-        </script>
-    {% endblock %}
+            if (district in sectors) {
+                sectors[district].forEach(function(sector) {
+                    let option = document.createElement('option');
+                    option.value = sector.value;
+                    option.textContent = sector.label;
+                    sectorSelect.appendChild(option);
+                });
+            }
+        });
+    </script>
 {% endblock %}

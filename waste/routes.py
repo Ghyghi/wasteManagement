@@ -162,28 +162,30 @@ def register_routes(app):
     @app.route('/route/register', methods=['GET', 'POST'])
     @login_required
     def route_register():
-        form = Routess()
+        form = RoutesForm()
         if form.validate_on_submit():
-            # Handle the form submission
-            company = form.company.data
-            days = form.days.data
+        
+            company_id = form.company.data
+            pickup_days = form.days.data
             district = form.district.data
             sector = form.sector.data
 
             route_name = f"{sector},{district}"
 
+            print(f"Comany: {company_id} days: {pickup_days} route: {route_name}")
+
             #Check whether the route exists
-            existing_route = Routes.query.filter(Routes.route_name == route_name)
+            existing_route = Routes.query.filter(Routes.route_name == route_name).first()
 
             if existing_route:
                 flash_message('Route already exists', 'warning')
-                return redirect(url_for(route_register))
+                return redirect(url_for('route_register'))
             else:
-                new_route = Routes(company_id=company, pickup_days=days, route_name=route_name)
+                new_route = Routes(company_id=company_id, pickup_days=pickup_days, route_name=route_name)
                 db.session.add(new_route)
                 db.session.commit()
                 flash_message('Route registered successfully,', 'success')
-                print(f'{route_name} registered with to {company}')
+                print(f'{route_name} registered with to {company_id}')
                 return redirect(url_for('admin_dashboard'))
         return render_template('admin/routes.html', form=form)
     ########### House APIs##################################################

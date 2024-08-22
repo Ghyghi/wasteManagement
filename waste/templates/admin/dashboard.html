@@ -28,7 +28,7 @@
         <table class="routes-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Route ID</th>
                     <th>Company</th>
                     <th>Routes</th>
                     <th>Days</th>
@@ -38,7 +38,7 @@
                 {% for route in routes %}
                 <tr>
                     <td>{{ route.route_id }}</td>
-                    <td>{{ route.company_id }}</td>
+                    <td>{{ company.companyname }}</td>
                     <td>{{ route.route_name }}</td>
                     <td>{{ route.pickup_days }}</td>
                 </tr>
