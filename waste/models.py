@@ -35,7 +35,7 @@ class CollectorUser(db.Model, UserMixin):
     collector_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     firstname = db.Column(db.String(150), nullable=False)
     secondname = db.Column(db.String(150), nullable=False)
-    companyname = db.Column(db.String(150), db.ForeignKey('adminuser.companyname'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_company_id'), nullable=False)
     collectoremail = db.Column(db.String(150), unique=True, nullable=False)
     role = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(150), nullable=False)
