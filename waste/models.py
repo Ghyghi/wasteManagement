@@ -14,6 +14,8 @@ class HouseUser(db.Model, UserMixin):
     role = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(150), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_collector = db.Column(db.Boolean, default=False, nullable=False)
+    is_house = db.Column(db.Boolean, default=True, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
     def get_id(self):
@@ -26,6 +28,9 @@ class AdminUser(db.Model, UserMixin):
     adminemail = db.Column(db.String(150), unique=True, nullable=False)
     role = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(150), nullable=False)
+    is_admin = db.Column(db.Boolean, default=True, nullable=False)
+    is_collector = db.Column(db.Boolean, default=False, nullable=False)
+    is_house = db.Column(db.Boolean, default=False, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
     def get_id(self):
@@ -41,6 +46,8 @@ class CollectorUser(db.Model, UserMixin):
     role = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(150), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_collector = db.Column(db.Boolean, default=True, nullable=False)
+    is_house = db.Column(db.Boolean, default=False, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationship with AdminUser (company)

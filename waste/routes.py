@@ -14,8 +14,13 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or not current_user.is_admin:
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('home'))  # Redirect to a safe page
+            flash_message('You do not have permission to access this page.', 'danger')
+            if current_user.is_house:
+                return redirect(url_for('house_dashboard'))
+            elif current_user.is_collector:
+                return redirect(url_for('collector_dashboard'))
+            else:
+                return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
