@@ -5,9 +5,19 @@ from flask_login import login_required, current_user, login_user, logout_user
 from waste import *
 from sqlalchemy import or_, and_
 from waste.mailapi import *
+from functools import wraps
 
 def flash_message(message, category):
     flash(message, category)
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('You do not have permission to access this page.', 'danger')
+            return redirect(url_for('home'))  # Redirect to a safe page
+        return f(*args, **kwargs)
+    return decorated_function
 
 # APP routes
 def register_routes(app):
@@ -148,6 +158,7 @@ def register_routes(app):
     # Admin Dashboard Route
     @app.route('/admin/dashboard')
     @login_required
+    @admin_required
     def admin_dashboard():
 
         # Get the admin_id of the currently logged-in admin
@@ -161,6 +172,7 @@ def register_routes(app):
     # Register a route
     @app.route('/route/register', methods=['GET', 'POST'])
     @login_required
+    @admin_required
     def route_register():
         form = RoutesForm()
         if form.validate_on_submit():
@@ -210,6 +222,7 @@ def register_routes(app):
     #Delete route
     @app.route('/route/delete/<int:route_id>', methods=['GET','POST'])
     @login_required
+    @admin_required
     def delete_route(route_id):
         route = Routes.query.get_or_404(route_id)
         db.session.delete(route)
@@ -220,6 +233,7 @@ def register_routes(app):
     #Update route
     @app.route('/route/update/<int:route_id>', methods=['GET','POST'])
     @login_required
+    @admin_required
     def update_route(route_id):
         route = Routes.query.filter_by(route_id=route_id).first()
 
