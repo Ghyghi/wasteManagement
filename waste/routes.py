@@ -38,7 +38,7 @@ def register_routes(app):
         try:
             email = confirm_token(token)
         except:
-            flash('The confirmation link is invalid or has expired.', 'danger')
+            flash_message('The confirmation link is invalid or has expired.', 'danger')
             return redirect(url_for('resend_confirmation'))
 
         # Check for the user in all user types
@@ -53,19 +53,16 @@ def register_routes(app):
                     flash('Account already confirmed. Please log in.', 'success')
                 else:
                     user.confirmed = True
-                    db.session.commit()
-                    flash('You have confirmed your account. Thanks!', 'success')
-                    if user == 'admin_user':
-                        return redirect(url_for('admin_login'))
-                    elif user=='house_user':
-                        return redirect(url_for('login'))
-                    else:
-                        return redirect(url_for('collector_login'))
-        
+                db.session.commit()
+                flash('You have confirmed your account. Thanks!', 'success')
+                if isinstance(user, AdminUser):
+                    return redirect(url_for('admin_login'))
+                elif isinstance(user, HouseUser):
+                    return redirect(url_for('login'))
         flash('No account found for this email.', 'danger')
         return redirect(url_for('resend_confirmation'))
     
-    # Re-send Confirmation Route
+    #Re-send Confirmation Email
     @app.route('/resend_confirmation', methods=['GET', 'POST'])
     def resend_confirmation():
         form = ResendConfirmationForm()
@@ -74,15 +71,15 @@ def register_routes(app):
             admin_user = AdminUser.query.filter_by(adminemail=email).first()
             house_user = HouseUser.query.filter_by(houseemail=email).first()
             collector_user = CollectorUser.query.filter_by(collectoremail=email).first()
-            users = {'admin_user': admin_user, 'house_user': house_user, 'collector_user': collector_user}
+            users = [admin_user, house_user, collector_user]  # List of user objects
             
-            for role, user in users.items():
+            for user in users:
                 if user and not user.confirmed:
-                    if role == 'admin_user':
+                    if isinstance(user, AdminUser):
                         send_confirmation_email(user.adminemail)
-                    elif role == 'house_user':
+                    elif isinstance(user, HouseUser):
                         send_confirmation_email(user.houseemail)
-                    else:
+                    elif isinstance(user, CollectorUser):
                         send_confirmation_email(user.collectoremail)
                     
                     flash('A new confirmation email has been sent.', 'success')
@@ -109,6 +106,14 @@ def register_routes(app):
                 return redirect(url_for('login'))
         return render_template('forgot.html', form=form)
     
+    #Logout Route
+    @app.route('/logout')
+    @login_required
+    def logout():
+        logout_user()
+        flash_message('Logged out successfully!', 'success')
+        return redirect(url_for('home'))
+    
     ########### Admin APIs##################################################
     # Admin Register route
     @app.route('/admin/register', methods=['GET', 'POST'])
@@ -118,7 +123,6 @@ def register_routes(app):
             companyname = form.companyname.data
             password = form.password.data
             email = form.email.data
-            role="Admin"
             
             #Check if the user exists
 
@@ -127,11 +131,11 @@ def register_routes(app):
                 flash_message('Company name or email already in use', 'danger')
                 return redirect(url_for('admin_register'))
             else:
-                new_user = AdminUser(companyname = companyname, adminemail = email, password = password, role=role, confirmed = False)
+                new_user = AdminUser(companyname = companyname, adminemail = email, password = password, confirmed = False)
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('A confirmaton email has been sent to you email. Please confirm before you proceed to login,', 'success')
-                print(f'{companyname} registered with role {role}')
+                send_confirmation_email(email)
                 return redirect(url_for('admin_login'))
         return render_template('admin/register.html', form=form)
     
@@ -261,6 +265,24 @@ def register_routes(app):
 
             return redirect(url_for('admin_dashboard'))
         return render_template('/admin/updateRoute.html', form=form, route=route)
+    
+    @app.route('/admin/unconfirmed_users')
+    @login_required
+    @admin_required
+    def unconfirmed_users():
+        users = CollectorUser.query.filter_by(confirmed=False).all()
+        return render_template('admin/unconfirmed_users.html', users=users)
+    
+    @app.route('/admin/confirm_user/<int:user_id>', methods=['POST'])
+    @login_required
+    @admin_required
+    def confirm_user(user_id):
+        user = CollectorUser.query.get_or_404(user_id)
+        user.confirmed = True
+        db.session.commit()
+        confirmed_user(user.collectoremail)
+        flash_message('User confirmed successfully.', 'success')
+        return redirect(url_for('unconfirmed_users'))
 
     ########### House APIs##################################################
     
@@ -276,7 +298,6 @@ def register_routes(app):
             username = form.username.data
             houseemail = form.email.data
             password = form.password.data
-            role = 'Household'
 
             #Check if the user exists
             existing_user = HouseUser.query.filter((HouseUser.username == username) | (HouseUser.houseemail == houseemail)).first()
@@ -285,7 +306,7 @@ def register_routes(app):
                 flash_message('Username or email already in use. Try again', 'danger')
                 return render_template('house/register.html', form=form)
             else:
-                new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, role=role, password=password, confirmed=False)
+                new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
                 send_confirmation_email(new_user.houseemail)
@@ -312,21 +333,11 @@ def register_routes(app):
                 else:
                     login_user(user, remember=True)
                     flash_message('User logged in successfully!', 'success') 
+                    print("Redirecting to house_dashboard")
+                    return redirect(url_for('house_dashboard'))
 
-                    print(f"User {user.username} logged in with role: {user.role}")
-
-                    # Redirect based on user role
-                    if user.role == 'Household':
-                        print("Redirecting to house_dashboard")
-                        return redirect(url_for('house_dashboard'))
-                    elif user.role == 'Collector':
-                        print("Redirecting to collector_dashboard")
-                        return redirect(url_for('collector_dashboard'))
-                    else:
-                        flash_message('Invalid role. Please try again.', 'danger')
-                        return redirect(url_for('login'))
             else:
-                flash_message('Invalid username, role, or password. Please try again.', 'danger')
+                flash_message('Invalid username, or password. Please try again.', 'danger')
                 return render_template('house/login.html', form=form)
         return render_template('house/login.html', form=form)
     
@@ -345,8 +356,54 @@ def register_routes(app):
         return render_template('collector/dashboard.html')
     
     #Collector Login
-    @app.route('/collector/login')
+    @app.route('/collector/login', methods=['GET', 'POST'])
     def collector_login():
-        return "Collector Login"
+        form=CollectorLoginForm()
+
+        if form.validate_on_submit():
+            collectoremail = form.collectoremail.data
+            password = form.password.data
+
+            user = CollectorUser.query.filter_by(collectoremail=collectoremail).first()
+
+            if user and user.password==password:
+                if not user.confirmed:
+                    flash_message("Please wait for your admin to verify you.", 'Warning')
+                    return redirect(url_for('home'))
+                else:
+                    login_user(user)
+                    flash_message('Login Successful.', 'success')
+                    return redirect(url_for('collector_dashboard'))
+            else:
+                flash_message('The credentials entered are not accurate.', 'danger')
+                return redirect(url_for('collector_login'))
+        return render_template('/collector/login.html', form=form)
+    
+    #Collector Register
+    @app.route('/collector/register', methods=['GET', 'POST'])
+    def collector_register():
+        form=CollectorRegisterForm()
+
+        if form.validate_on_submit():
+            firstname=form.firstname.data
+            secondname=form.secondname.data
+            company_id=form.company_id.data
+            password=form.password.data
+            collectoremail=form.collectoremail.data
+
+            #Check if the user already exits
+            existing_user = CollectorUser.query.filter(CollectorUser.collectoremail==collectoremail, CollectorUser.company_id==company_id).first()
+
+            if existing_user:
+                flash_message('User already exists. Try again', 'danger')
+                return redirect(url_for('collector_register'))
+            else:
+                new_user = CollectorUser(firstname=firstname, secondname=secondname, company_id=company_id, password=password, collectoremail=collectoremail)
+                db.session.add(new_user)
+                db.session.commit()
+                flash_message('Registration successful.', 'success')
+                flash_message('Please wait for admin to verify you.', 'warning')
+                return redirect(url_for('home'))
+        return render_template('/collector/register.html', form=form)
 
 

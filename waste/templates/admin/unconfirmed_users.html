@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Unconfirmed Users{% endblock %}
+{% block header %}
+    {% include 'admin/navbar.html' %}
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Unconfirmed Users</h1>
+    {% if users %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>First Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.collector_id }}</td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.secondname }}</td>
+                        <td>{{ user.collectoremail }}</td>
+                        <td>
+                            <form action="{{ url_for('confirm_user', user_id=user.collector_id) }}" method="POST">
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No unconfirmed users at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

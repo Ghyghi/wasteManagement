@@ -72,3 +72,7 @@ def send_confirmation_email(user_email):
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = render_template('email/activate.html', confirm_url=confirm_url)
     send_email(user_email, 'Please confirm your email', html)
+
+def confirmed_user(user_email):
+    html = render_template('email/activate.html')
+    send_email(user_email, 'You are now a verified user.', html)

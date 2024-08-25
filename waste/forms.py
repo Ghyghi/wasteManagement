@@ -88,7 +88,13 @@ class UpdateRouteForm(FlaskForm):
 class CollectorRegisterForm(FlaskForm):
     firstname = StringField('First Name', validators=[InputRequired()])
     secondname = StringField('Second Name', validators=[InputRequired()])
-    companyname = StringField('Company Name', validators=[InputRequired()])
-    password = StringField('Password', validators=[InputRequired(), Length(min=8, max=50)])
+    company_id = IntegerField('Company ID', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     collectoremail = EmailField('Your email', validators=[InputRequired()])
     submit = SubmitField('Register')
+
+class CollectorLoginForm(FlaskForm):
+    collectoremail = EmailField('Your Email', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
+    submit = SubmitField('Login')
+

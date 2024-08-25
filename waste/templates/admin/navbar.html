@@ -1,5 +1,6 @@
 <nav>
     <a href="{{url_for('admin_dashboard')}}">Dashboard</a>
     <a href="{{ url_for('view_route') }}">Routes</a>
-    <a href="">Collectors</a>
+    <a href="{{ url_for('unconfirmed_users') }}">Unconfirmed Collectors</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
 </nav>
