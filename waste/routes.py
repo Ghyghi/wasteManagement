@@ -44,22 +44,23 @@ def register_routes(app):
         # Check for the user in all user types
         admin_user = AdminUser.query.filter_by(adminemail=email).first()
         house_user = HouseUser.query.filter_by(houseemail=email).first()
-        collector_user = CollectorUser.query.filter_by(collectoremail=email).first()
-        users = [admin_user, house_user, collector_user]
+        users = [admin_user, house_user]
 
         for user in users:
             if user:  # Check if user exists
                 if user.confirmed:
-                    flash('Account already confirmed. Please log in.', 'success')
+                    flash_message('Account already confirmed. Please log in.', 'success')
                 else:
                     user.confirmed = True
                 db.session.commit()
-                flash('You have confirmed your account. Thanks!', 'success')
+                flash_message('You have confirmed your account. Thanks!', 'success')
                 if isinstance(user, AdminUser):
                     return redirect(url_for('admin_login'))
                 elif isinstance(user, HouseUser):
                     return redirect(url_for('login'))
-        flash('No account found for this email.', 'danger')
+                else:
+                    flash_message('Invalid account type', 'danger')
+        flash_message('No account found for this email.', 'danger')
         return redirect(url_for('resend_confirmation'))
     
     #Re-send Confirmation Email
@@ -70,8 +71,7 @@ def register_routes(app):
             email = form.email.data
             admin_user = AdminUser.query.filter_by(adminemail=email).first()
             house_user = HouseUser.query.filter_by(houseemail=email).first()
-            collector_user = CollectorUser.query.filter_by(collectoremail=email).first()
-            users = [admin_user, house_user, collector_user]  # List of user objects
+            users = [admin_user, house_user]
             
             for user in users:
                 if user and not user.confirmed:
@@ -79,13 +79,13 @@ def register_routes(app):
                         send_confirmation_email(user.adminemail)
                     elif isinstance(user, HouseUser):
                         send_confirmation_email(user.houseemail)
-                    elif isinstance(user, CollectorUser):
-                        send_confirmation_email(user.collectoremail)
+                    else:
+                        flash_message('Invalid account type', 'danger')
                     
-                    flash('A new confirmation email has been sent.', 'success')
+                    flash_message('A new confirmation email has been sent.', 'success')
                     break
             else:
-                flash('Email not found or already confirmed.', 'danger')
+                flash_message('Email not found or already confirmed.', 'danger')
         
         return render_template('resend_confirmation.html', form=form)
     
@@ -266,13 +266,18 @@ def register_routes(app):
             return redirect(url_for('admin_dashboard'))
         return render_template('/admin/updateRoute.html', form=form, route=route)
     
-    @app.route('/admin/unconfirmed_users')
+    #See company collectors
+    @app.route('/admin/collectors', methods=['GET'])
     @login_required
     @admin_required
-    def unconfirmed_users():
-        users = CollectorUser.query.filter_by(confirmed=False).all()
-        return render_template('admin/unconfirmed_users.html', users=users)
+    def company_collectors():
+        company_id = current_user.admin_id
+
+        users = CollectorUser.query.filter_by(confirmed=False, company_id=company_id).all()
+        confirmed_users = CollectorUser.query.filter_by(confirmed=True, company_id=company_id).all()
+        return render_template('/admin/collectors.html', users=users, confirmed_users=confirmed_users)
     
+    #Confirm collector users
     @app.route('/admin/confirm_user/<int:user_id>', methods=['POST'])
     @login_required
     @admin_required
@@ -283,6 +288,18 @@ def register_routes(app):
         confirmed_user(user.collectoremail)
         flash_message('User confirmed successfully.', 'success')
         return redirect(url_for('unconfirmed_users'))
+    
+    #View Company Profile
+    @app.route('/admin/profile', methods=['GET'])
+    @login_required
+    @admin_required
+    def admin_profile():
+        company_id = current_user.admin_id
+        company = AdminUser.query.filter_by(admin_id=current_user.admin_id).first()
+        collector_count = CollectorUser.query.filter_by(company_id=company_id).count()
+        routes = Routes.query.filter_by(company_id=current_user.admin_id).count()
+
+        return render_template('/admin/profile.html', company=company, collector_count=collector_count, routes=routes)
 
     ########### House APIs##################################################
     

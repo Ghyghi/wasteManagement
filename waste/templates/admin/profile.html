@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>Company Profile</title>
+{% endblock %}
+{% block header %}
+{% include 'admin/navbar.html' %}
+{% endblock %}
+{% block content %}
+<div>
+    <h1>Company Profile</h1>
+</div>
+<section>
+    <div>
+        <h3>Company Details</h3>
+        <p><strong>Company Name: </strong>{{ company.companyname }}</p>
+        <p><strong>Company ID: </strong>{{ company.admin_id }}</p>
+    </div>
+    <div>
+        <h3>Reviews</h3>
+    </div>
+    <div>
+        <h3>Company Collectors</h3>
+        <p>The company has {{ collector_count }} active collectors.</p>
+        <p>To see them all, click <a href="{{ url_for('company_collectors') }}">here</a>.</p>
+    </div>
+    <div>
+        <h3>Covered Routes</h3>
+        <p>The company covers {{ routes }} routes.</p>
+        <p>To see the full list, click <a href="{{ url_for('view_route') }}">here</a>.</p>
+    </div>
+</section>
+{% endblock %}

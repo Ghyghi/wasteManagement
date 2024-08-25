@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Company Collectors</title>
+{% endblock %}
+{% block header %}
+    {% include 'admin/navbar.html' %}
+{% endblock %}
+{% block content %}
+<h1>Company Collectors</h1>
+<section>
+    <div>
+        <h3>Unconfirmed Collectors</h3>
+        {% if users %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Second Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.collector_id }}</td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.secondname }}</td>
+                        <td>{{ user.collectoremail }}</td>
+                        <td>
+                            <form action="{{ url_for('confirm_user', user_id=user.collector_id) }}" method="POST">
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Unconfirmed collectors showup here.</p>
+    {% endif %}
+    </div>
+    <div>
+        <h3>Active Collectors</h3>
+        {% if confirmed_users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Second Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in confirmed_users %}
+                        <tr>
+                            <td>{{ user.collector_id }}</td>
+                            <td>{{ user.firstname }}</td>
+                            <td>{{ user.secondname }}</td>
+                            <td>{{ user.collectoremail }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <p>Confirmed collectors will showup here.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

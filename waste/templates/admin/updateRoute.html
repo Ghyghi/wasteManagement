@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Update Route{% endblock %}
+{% block head %}
+<title>Update Route</title>
+{% endblock %}
 {% block content %}
 <div class="container">
-    <h2>Update route</h2>
+    <h2>Update Route</h2>
     <form id="updaterouteForm" method="POST" action="{{url_for('update_route', route_id=route.route_id)}}" novalidate autocomplete="on">
         {{ form.hidden_tag() }}
 
