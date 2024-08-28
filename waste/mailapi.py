@@ -1,6 +1,7 @@
 from datetime import *
 import os
 from google.oauth2.credentials import Credentials
+from google.auth.exceptions import RefreshError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -32,17 +33,22 @@ def get_credentials():
         print("token.json not found, initiating OAuth flow...")
 
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            print("Credentials expired, refreshing...")
-        else:
+        try:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+                print("Credentials expired, refreshing...")
+            else:
+                raise RefreshError("Token expired or revoked.")
+        except RefreshError:
+            print("RefreshError occurred. Reauthorizing...")
             flow = InstalledAppFlow.from_client_secrets_file(credentials_path, ALL_SCOPES)
             creds = flow.run_local_server(port=51912)
             print("OAuth flow completed, credentials obtained.")
-        with open(creds_path, 'w') as token:
-            token.write(creds.to_json())
-            print("Credentials saved to token.json.")
-    print('Credentials Gotten with no issue')
+            with open(creds_path, 'w') as token:
+                token.write(creds.to_json())
+                print("Credentials saved to token.json.")
+
+    print('Credentials obtained with no issue')
     return creds
 
 def get_gmail_service():
@@ -129,18 +135,18 @@ def send_email_notification(user_emails, summary):
     for email in user_emails:
         send_email(email, subject, body)
 
-if __name__=="__main__":
-    get_credentials()
-    get_gmail_service()
-    get_calendar_service()
-    email='nagasaroghislaine3@gmail.com'
-    subject='Test Email'
-    html_content='This is a test'
-    send_email(email, subject, html_content)
-    user_emails =['nagasaroghislaine3@gmail.com', 'n.iyankijij@alustudent.com']
-    summary = 'remainder'
-    user_location = 'Kk191st, Kabeza'
-    startdate = '2024-08-22T00:00:00+02:00'
-    user_choice = 'weekly'
-    create_calendar_reminder(user_emails, user_location, startdate, user_choice)
-    send_email_notification(user_emails, summary)
+# if __name__=="__main__":
+#     get_credentials()
+#     get_gmail_service()
+#     get_calendar_service()
+#     email='nagasaroghislaine3@gmail.com'
+#     subject='Test Email'
+#     html_content='This is a test'
+#     send_email(email, subject, html_content)
+#     user_emails =['nagasaroghislaine3@gmail.com', 'n.iyankijij@alustudent.com']
+#     summary = 'remainder'
+#     user_location = 'Kk191st, Kabeza'
+#     startdate = '2024-08-22T00:00:00+02:00'
+#     user_choice = 'weekly'
+#     create_calendar_reminder(user_emails, user_location, startdate, user_choice)
+#     send_email_notification(user_emails, summary)

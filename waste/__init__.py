@@ -30,21 +30,21 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Attempt to find the user by user_id in HouseUser
-        houseuser = HouseUser.query.get(user_id)
-        if houseuser:
-            return houseuser
-        
-        # Attempt to find the user by companyname in AdminUser
+        # Attempt to find the user by user_id in AdminUser first
         adminuser = AdminUser.query.get(user_id)
         if adminuser:
             return adminuser
-        
+
+        # Attempt to find the user by house_id in HouseUser
+        houseuser = HouseUser.query.get(user_id)
+        if houseuser:
+            return houseuser
+
         # Attempt to find the user by collector_id in CollectorUser
         collectoruser = CollectorUser.query.get(user_id)
         if collectoruser:
             return collectoruser
-        
+
         # If no user found
         return None
     
@@ -74,5 +74,5 @@ def send_confirmation_email(user_email):
     send_email(user_email, 'Please confirm your email', html)
 
 def confirmed_user(user_email):
-    html = render_template('email/activate.html')
+    html = render_template('email/adminActivate.html')
     send_email(user_email, 'You are now a verified user.', html)

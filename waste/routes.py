@@ -13,8 +13,11 @@ def flash_message(message, category):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not current_user.is_admin:
-            flash_message('You do not have permission to access this page.', 'danger')
+        if not current_user.is_authenticated:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login'))
+        elif not current_user.is_admin:
+            flash('You do not have permission to access this page.', 'danger')
             if current_user.is_house:
                 return redirect(url_for('house_dashboard'))
             elif current_user.is_collector:
@@ -287,7 +290,7 @@ def register_routes(app):
         db.session.commit()
         confirmed_user(user.collectoremail)
         flash_message('User confirmed successfully.', 'success')
-        return redirect(url_for('unconfirmed_users'))
+        return redirect(url_for('company_collectors'))
     
     #View Company Profile
     @app.route('/admin/profile', methods=['GET'])
@@ -423,4 +426,9 @@ def register_routes(app):
                 return redirect(url_for('home'))
         return render_template('/collector/register.html', form=form)
 
+
+    @app.route('/test_roles')
+    @login_required
+    def test_roles():
+        return f"Admin: {current_user.is_admin}, Collector: {current_user.is_collector}, House: {current_user.is_house}"
 
