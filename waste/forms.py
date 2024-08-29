@@ -84,7 +84,6 @@ class UpdateRouteForm(FlaskForm):
     pickup_days = SelectField('Pickup Day', choices=days_of_the_week, validators=[InputRequired()])
     frequency = SelectField('Pickup Frequency', choices=freq, validators=[InputRequired()])
     submit = SubmitField('Update Route')
-
 class CollectorRegisterForm(FlaskForm):
     firstname = StringField('First Name', validators=[InputRequired()])
     secondname = StringField('Second Name', validators=[InputRequired()])
@@ -92,9 +91,12 @@ class CollectorRegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     collectoremail = EmailField('Your email', validators=[InputRequired()])
     submit = SubmitField('Register')
-
 class CollectorLoginForm(FlaskForm):
     collectoremail = EmailField('Your Email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Login')
-
+class AssignmentForm(FlaskForm):
+    company_id=IntegerField('Enter the company ID', validators=[InputRequired()])
+    collector=IntegerField("Enter the collector's ID", validators=[InputRequired()])
+    route=IntegerField("Enter the route ID", validators=[InputRequired()])
+    submit=SubmitField("Assign")

@@ -61,3 +61,10 @@ class Routes(db.Model):
     pickup_days = db.Column(db.String(255), nullable=False)
     frequency = db.Column(db.String(255), nullable=False)
 
+class RouteAssignment(db.Model):
+    __tablename__ = 'routeassignment'
+    pair_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_route_assignment'), nullable=False)
+    collector = db.Column(db.Integer, db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_route_pair'), nullable=False)
+    route = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_assisgnment'), nullable=False)
+

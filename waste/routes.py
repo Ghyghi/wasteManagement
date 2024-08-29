@@ -303,6 +303,34 @@ def register_routes(app):
         routes = Routes.query.filter_by(company_id=current_user.admin_id).count()
 
         return render_template('/admin/profile.html', company=company, collector_count=collector_count, routes=routes)
+    
+    #Assign the route to a collector
+    @app.route('/admin/assign', methods=['GET', 'POST'])
+    @login_required
+    @admin_required
+    def assign_collector():
+        form = AssignmentForm()
+        if form.validate_on_submit():
+            company_id = form.company_id.data
+            collector = form.collector.data
+            route = form.route.data
+
+            #Check if the pair exists
+            pair = RouteAssignment.query.filter((RouteAssignment.route == route)).first()
+            if pair:
+                flash_message('The route has already been assigned', 'danger')
+                print('The route has already been assigned')
+                return redirect(url_for('assign_collector'))
+            else:
+                new_pair = RouteAssignment(collector=collector, company_id=company_id, route=route)
+                db.session.add(new_pair)
+                db.session.commit()
+                flash_message('The route has been assigned', 'success')
+                print('The route has been assigned')
+                return redirect(url_for('view_route'))
+        return render_template('/admin/assignCollector.html', form=form)
+
+
 
     ########### House APIs##################################################
     
