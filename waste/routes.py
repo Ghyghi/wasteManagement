@@ -222,7 +222,9 @@ def register_routes(app):
         admin_id = current_user.get_id()
         #Get the company routes and profile
         routes = Routes.query.filter_by(company_id=admin_id).all()
-        return render_template('/admin/viewRoutes.html', routes=routes)
+        #Get the assigned collector
+        collectors= RouteAssignment.query.filter_by(company_id=admin_id).all
+        return render_template('/admin/viewRoutes.html', routes=routes, collectors=collectors)
     
     #View route details
     @app.route('/route/view/<int:route_id>', methods=['GET','POST'])

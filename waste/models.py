@@ -3,7 +3,6 @@ from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from . import db
 
-
 class HouseUser(db.Model, UserMixin):
     __tablename__ = 'houseuser'
     house_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -31,6 +30,9 @@ class AdminUser(db.Model, UserMixin):
     is_house = db.Column(db.Boolean, default=False, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
+    # Relationship with Routes
+    routes = relationship('Routes', backref='company', lazy=True)
+
     def get_id(self):
         return str(self.admin_id)
 
@@ -50,6 +52,9 @@ class CollectorUser(db.Model, UserMixin):
     # Relationship with AdminUser (company)
     company = relationship('AdminUser', backref='collectors')
 
+    # Relationship with RouteAssignment
+    route_assignments = relationship('RouteAssignment', backref='collector', lazy=True)
+
     def get_id(self):
         return str(self.collector_id)
     
@@ -61,10 +66,12 @@ class Routes(db.Model):
     pickup_days = db.Column(db.String(255), nullable=False)
     frequency = db.Column(db.String(255), nullable=False)
 
+    # Relationship with RouteAssignment
+    assignments = relationship('RouteAssignment', backref='route', lazy=True)
+
 class RouteAssignment(db.Model):
     __tablename__ = 'routeassignment'
     pair_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_route_assignment'), nullable=False)
-    collector = db.Column(db.Integer, db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_route_pair'), nullable=False)
-    route = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_assisgnment'), nullable=False)
-
+    collector_id = db.Column(db.Integer, db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_route_pair_assignment'), nullable=False)
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_assisgnment'), nullable=False)

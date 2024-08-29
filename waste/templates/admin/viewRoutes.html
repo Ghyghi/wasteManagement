@@ -13,17 +13,18 @@
     <h3>Your Routes</h3>
     {% if routes|length == 0 %}
         <p>You don't have any routes yet.</p>
-        <a href="{{url_for('route_register')}}" class="create-group-btn">Create a route.</a>
+        <a href="{{ url_for('route_register') }}" class="create-group-btn">Create a route.</a>
     {% else %}
         <table class="routes-table">
             <thead>
                 <tr>
                     <th>Route ID</th>
                     <th>Company</th>
-                    <th>Routes</th>
+                    <th>Route Name</th>
                     <th>Days</th>
                     <th>Frequency</th>
                     <th>Action</th>
+                    <th>Assigned to</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,6 +37,15 @@
                     <td>{{ route.frequency }}</td>
                     <td>
                         <a href="{{ url_for('route_details', route_id=route.route_id) }}">View Route</a>
+                    </td>
+                    <td>
+                        {% if route.collectors|length == 0 %}
+                            <a href="{{ url_for('assign_collector') }}">Assign a collector</a>
+                        {% else %}
+                            {% for collector in route.collectors %}
+                                {{ collector.collector_name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
