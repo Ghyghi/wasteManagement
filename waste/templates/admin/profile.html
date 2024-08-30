@@ -2,31 +2,58 @@
 {% block head %}
     <title>Company Profile</title>
 {% endblock %}
+
 {% block header %}
 {% include 'admin/navbar.html' %}
 {% endblock %}
+
 {% block content %}
-<div>
-    <h1>Company Profile</h1>
+<div class="container my-4">
+    <h1 class="mb-4 text-center">Company Profile</h1>
+    <section class="row">
+        <!-- Company Details Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Company Details</h3>
+                    <p><strong>Company Name: </strong>{{ company.companyname }}</p>
+                    <p><strong>Company ID: </strong>{{ company.admin_id }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Reviews</h3>
+                    <!-- Add review content here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Collectors Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Company Collectors</h3>
+                    <p>The company has {{ collector_count }} active collectors.</p>
+                    <p>To see them all, click <a href="{{ url_for('company_collectors') }}">here</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Covered Routes Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Covered Routes</h3>
+                    <p>The company covers {{ routes }} routes.</p>
+                    <p>To see the full list, click <a href="{{ url_for('view_route') }}">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
-<section>
-    <div>
-        <h3>Company Details</h3>
-        <p><strong>Company Name: </strong>{{ company.companyname }}</p>
-        <p><strong>Company ID: </strong>{{ company.admin_id }}</p>
-    </div>
-    <div>
-        <h3>Reviews</h3>
-    </div>
-    <div>
-        <h3>Company Collectors</h3>
-        <p>The company has {{ collector_count }} active collectors.</p>
-        <p>To see them all, click <a href="{{ url_for('company_collectors') }}">here</a>.</p>
-    </div>
-    <div>
-        <h3>Covered Routes</h3>
-        <p>The company covers {{ routes }} routes.</p>
-        <p>To see the full list, click <a href="{{ url_for('view_route') }}">here</a>.</p>
-    </div>
-</section>
 {% endblock %}
+ 

@@ -331,9 +331,7 @@ def register_routes(app):
                 print('The route has been assigned')
                 return redirect(url_for('view_route'))
         return render_template('/admin/assignCollector.html', form=form)
-
-
-
+    
     ########### House APIs##################################################
     
     # House register route
@@ -455,10 +453,23 @@ def register_routes(app):
                 flash_message('Please wait for admin to verify you.', 'warning')
                 return redirect(url_for('home'))
         return render_template('/collector/register.html', form=form)
-
-
-    @app.route('/test_roles')
-    @login_required
-    def test_roles():
-        return f"Admin: {current_user.is_admin}, Collector: {current_user.is_collector}, House: {current_user.is_house}"
-
+    
+    #View assigned routes
+    @app.route('/collector/routes', methods=['GET'])
+    def collector_routes():
+        collector_id = current_user.get_id()
+        routess = RouteAssignment.query.filter(RouteAssignment.collector_id==collector_id).first()
+        if routess:
+            company = Routes.query.filter(Routes.route_id == routess.route_id).first()
+        else:
+            company = None
+        return render_template('/collector/myRoutes.html', routess=routess, company=company)
+    
+    #Collector profile
+    @app.route('/collector/profile', methods=['GET'])
+    def collector_profile():
+        collector_id = current_user.get_id()
+        collector = CollectorUser.query.filter(CollectorUser.collector_id==collector_id).first()
+        company = AdminUser.query.filter(AdminUser.admin_id==collector.company_id).first()
+        route_count = RouteAssignment.query.filter(RouteAssignment.collector_id==collector_id).count()
+        return render_template('/collector/profile.html', collector=collector, company=company, route_count=route_count)

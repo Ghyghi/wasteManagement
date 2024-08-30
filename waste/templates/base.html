@@ -3,11 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Waste Management is a platform that connects waste collection companies to their household users for a more seamless interaction">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        /* Custom styling */
+        body, html {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        main {
+            flex: 1; /* Allow main to expand and push footer down */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content if needed */
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto; /* Push footer to the bottom */
+            width: 100%;
+        }
+
+        .alert-container {
+            margin-bottom: 20px;
+        }
+    </style>
     {% block head %} {% endblock %}
 </head>
 <body>
-    {%block header%} {%endblock%}
+    {% block header %}
+
+    {% endblock %}
+    
     <main>
         <div class="container">
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -23,10 +55,10 @@
             {% endwith %}
             {% block content %}{% endblock %}
         </div>
-        
     </main>
-    <footer> &copy;Ghislaine 2024</footer>
     
+    <footer>&copy; Smart Waste Collection 2024</footer>
+
     <script>
       document.addEventListener('DOMContentLoaded', function() {
           setTimeout(function() {

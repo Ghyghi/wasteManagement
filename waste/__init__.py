@@ -65,7 +65,7 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
-from waste.mailapi import send_email  # Import the send_email function
+from waste.mailapi import send_email
 
 def send_confirmation_email(user_email):
     token = generate_confirmation_token(user_email)

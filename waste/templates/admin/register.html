@@ -2,29 +2,35 @@
 {% block head %}
 <title>Admin Register</title>
 {% endblock %}
+
 {% block content %}
 <div class="container">
     <h2>Admin Register</h2>
-    <form id="registerForm" method="POST" action="/admin/register" novalidate>
+    <form id="registerForm" method="POST" action="/admin/register" novalidate autocomplete="on">
         {{ form.hidden_tag() }}
 
+        <!-- Company Name Input -->
         <div class="form-group">
             {{ form.companyname.label }}
             {{ form.companyname(class="form-control", placeholder="Enter your company name") }}
             <div class="invalid-feedback">Please enter a valid company name.</div>
         </div>
 
+        <!-- Email Input -->
         <div class="form-group">
             {{ form.email.label }}
             {{ form.email(class="form-control", placeholder="Enter your company email") }}
             <div class="invalid-feedback">Please enter a valid email address.</div>
         </div>
 
+        <!-- Password Input -->
         <div class="form-group">
             {{ form.password.label }}
             {{ form.password(class="form-control", placeholder="Enter your password") }}
             <div class="invalid-feedback">Please enter a valid password.</div>
         </div>
+
+        <!-- Submit Button -->
         {{ form.submit(class="btn btn-primary") }}
     </form>
 </div>
@@ -36,22 +42,26 @@
         background-size: cover;
         color: #fff;
     }
+
     .container {
         background-color: rgba(255, 255, 255, 0.9);
         padding: 2rem;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         max-width: 400px;
-        margin: 2rem auto;
+        margin: 4rem auto;
     }
+
     h2 {
         text-align: center;
         color: #0693e3;
         margin-bottom: 1rem;
     }
+
     .form-group {
         margin-bottom: 1rem;
     }
+
     .form-control {
         width: 100%;
         padding: 0.5rem;
@@ -60,10 +70,12 @@
         border: 1px solid #ccc;
         font-size: 1rem;
     }
+
     .form-control:focus {
         border-color: #0693e3;
         box-shadow: 0 0 5px rgba(6, 147, 227, 0.5);
     }
+
     .btn-primary {
         background-color: #0693e3;
         border: none;
@@ -73,10 +85,15 @@
         cursor: pointer;
         border-radius: 4px;
         transition: background-color 0.3s;
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
     }
+
     .btn-primary:hover {
         background-color: #0577c0;
     }
+
     .invalid-feedback {
         color: #e74c3c;
         font-size: 0.875rem;

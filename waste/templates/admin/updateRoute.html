@@ -1,26 +1,35 @@
 {% extends 'base.html' %}
 {% block head %}
-<title>Update Route</title>
+    <title>Update Route</title>
 {% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Update Route</h2>
-    <form id="updaterouteForm" method="POST" action="{{url_for('update_route', route_id=route.route_id)}}" novalidate autocomplete="on">
+<div class="container my-4">
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <h2>Update Route</h2>
+    </div>
+
+    <!-- Form Section -->
+    <form id="updaterouteForm" method="POST" action="{{ url_for('update_route', route_id=route.route_id) }}" novalidate autocomplete="on">
         {{ form.hidden_tag() }}
 
+        <!-- Pickup Days Field -->
         <div class="form-group">
-            {{ form.pickup_days.label }}
+            {{ form.pickup_days.label(class="font-weight-bold") }}
             {{ form.pickup_days(class="form-control") }}
         </div>
 
+        <!-- Frequency Field -->
         <div class="form-group">
-            {{ form.frequency.label }}
+            {{ form.frequency.label(class="font-weight-bold") }}
             {{ form.frequency(class="form-control") }}
-
         </div>
 
-        {{ form.submit(class="btn btn-primary") }}
+        <!-- Submit Button -->
+        <div class="text-center">
+            {{ form.submit(class="btn btn-primary btn-lg") }}
+        </div>
     </form>
-
 </div>
 {% endblock %}

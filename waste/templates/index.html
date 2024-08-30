@@ -1,39 +1,52 @@
 {% extends 'base.html'%}
-{%block head%}
+{% block head %}
 <title>Home</title>
 <style>
-    .feature-section {
-        margin-top: 50px;
-    }
-
-    .feature-item {
-        text-align: center;
-    }
-
-    .feature-image {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .feature-content {
-        padding: 20px;
-        background-color: #f0f0f0;
-        border-radius: 8px;
-        margin-top: 10px;
+    body {
+        margin-top: 20px;
     }
 
     .feature-title {
-        font-size: 24px;
-        margin-bottom: 10px;
-        color: #1d3557;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
     }
 
-    .feature-description {
-        font-size: 16px;
-        color: #333;
+    #home {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: #e8f4f8;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .button-blue {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .button-blue:hover {
+        background-color: #0056b3;
+    }
+
+    .content {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-type {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
     }
 
     @media (max-width: 992px) {
@@ -42,38 +55,42 @@
         }
     }
 </style>
-{%endblock%}
+{% endblock %}
+
 {% block content %}
 <section id="home">
     <div>
-        <h2>Smart Waste Collector</h2>
+        <h1 class="feature-title">Smart Waste Collector</h1>
         <p>The smart way to schedule your waste collection</p>       
-            <div>
-                <form action="/resend_confirmation">
-                    <button class="button button-blue">Resend Confirmation</button>
-                </form>
-            </div>
+        <div>
+            <form action="/resend_confirmation">
+                <button class="button button-blue">Resend Confirmation</button>
+            </form>
+        </div>
     </div>
 </section>
-<section>
-    <h3>Our Types of Users</h3>
-    <div>
-        <h4>Household Users</h4>
-        <p>These are the individual households that book for waste collection services through our paltform.</p>
-        <a href="/house/register">Register as Household</a><br>
-        <a href="/house/login">Login as Household</a>
-    </div>
-    <div>
-        <h4>Waste Collector Users</h4>
-        <p>Collector users are the ones who do the actual collections.<br>They work for waste collection companies.</p>
-        <a href="{{ url_for('collector_register') }}">Register as Collector</a><br>
-        <a href="{{ url_for('collector_login') }}">Login as Collector</a>
-    </div>
-    <div>
-        <h4>Adminstration Users</h4>
-        <p>These are the management employees of different companies.<br>They work for waste collection companies, but they handle the company's profile on our platform.</p>
-        <a href="/admin/register">Register as Admin</a><br>
-        <a href="/admin/login">Login as Admin</a>
+
+<section class="content">
+    <h3 class="mb-4">Our Types of Users</h3>
+    <div class="row">
+        <div class="col-md-4 user-type">
+            <h4>Household Users</h4>
+            <p>These are the individual households that book for waste collection services through our platform.</p>
+            <a href="/house/register">Register as Household</a><br>
+            <a href="/house/login">Login as Household</a>
+        </div>
+        <div class="col-md-4 user-type">
+            <h4>Waste Collector Users</h4>
+            <p>Collector users are the ones who do the actual collections. They work for waste collection companies.</p>
+            <a href="{{ url_for('collector_register') }}">Register as Collector</a><br>
+            <a href="{{ url_for('collector_login') }}">Login as Collector</a>
+        </div>
+        <div class="col-md-4 user-type">
+            <h4>Administration Users</h4>
+            <p>These are the management employees of different companies. They handle the company's profile on our platform.</p>
+            <a href="/admin/register">Register as Admin</a><br>
+            <a href="/admin/login">Login as Admin</a>
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -1,6 +1,7 @@
 
 <nav>
-    <a href="">My Routes</a>
-    <a href="">Profile</a>
+    <a href="{{ url_for('collector_dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('collector_routes') }}">My Routes</a>
+    <a href="{{ url_for('collector_profile') }}">Profile</a>
     <a href="{{ url_for('logout') }}">Logout</a>
 </nav>

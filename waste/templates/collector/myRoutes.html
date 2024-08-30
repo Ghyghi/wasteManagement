@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Collector Routes</title>
+{% endblock %}
+
+{% block header %}
+{% include 'collector/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Routes assigned to you</h1>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <th>Route ID</th>
+                <th>Route Name</th>
+                <th>Pickup Days</th>
+                <th>Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ routess.route_id }}</td>
+                    <td>{{ company.route_name }}</td>
+                    <td>{{ company.pickup_days }}</td>
+                    <td>{{ company.frequency }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

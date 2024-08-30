@@ -2,23 +2,70 @@
 
 {% block head %}
 <title>Admin Dashboard</title>
+<style>
+    .routes-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    .routes-table th, .routes-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .routes-table th {
+        background-color: #f8f9fa; /* Light gray background for headers */
+        font-weight: 600;
+    }
+
+    .routes-table tr:nth-child(even) {
+        background-color: #f2f2f2; /* Alternating row color */
+    }
+
+    .section {
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid #e3e3e3;
+        border-radius: 8px;
+        background-color: #ffffff; /* White background for sections */
+    }
+
+    h1, h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    dl dt {
+        font-weight: bold;
+    }
+
+    dl dd {
+        margin-bottom: 10px;
+    }
+
+</style>
 {% endblock %}
+
 {% block header %}
     {% include 'admin/navbar.html' %}
 {% endblock %}
+
 {% block content %}
 <h1>Admin Dashboard</h1>
-<section>
+<section class="section">
     <div>
-        <h3>Your Company profile</h3>
+        <h3>Your Company Profile</h3>
         <dl>
             <dt>Company Name</dt>
-                <dd>{{company.companyname}}</dd>
+                <dd>{{ company.companyname }}</dd>
             <dt>Company ID</dt>
-                <dd>{{company.admin_id}}</dd>
+                <dd>{{ company.admin_id }}</dd>
         </dl>
     </div>
 </section>
+
 <section id="your-routes" class="section">
     <h3>Your Routes</h3>
     {% if routes|length == 0 %}

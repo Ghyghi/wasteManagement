@@ -1,17 +1,55 @@
 {% extends 'base.html' %}
 {% block head %}
 <title>Company Collectors</title>
+<style>
+    .collectors-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    .collectors-table th, .collectors-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .collectors-table th {
+        background-color: #f8f9fa; /* Light gray background for headers */
+        font-weight: 600;
+    }
+
+    .collectors-table tr:nth-child(even) {
+        background-color: #f2f2f2; /* Alternating row color */
+    }
+
+    .section {
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid #e3e3e3;
+        border-radius: 8px;
+        background-color: #ffffff; /* White background for sections */
+    }
+
+    h1, h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+</style>
 {% endblock %}
+
 {% block header %}
     {% include 'admin/navbar.html' %}
 {% endblock %}
+
 {% block content %}
 <h1>Company Collectors</h1>
-<section>
+<section class="section">
     <div>
         <h3>Unconfirmed Collectors</h3>
         {% if users %}
-        <table>
+        <table class="collectors-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -37,14 +75,14 @@
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
-        <p>Unconfirmed collectors showup here.</p>
-    {% endif %}
+        {% else %}
+        <p>Unconfirmed collectors show up here.</p>
+        {% endif %}
     </div>
     <div>
         <h3>Active Collectors</h3>
         {% if confirmed_users %}
-            <table>
+            <table class="collectors-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -65,7 +103,7 @@
                 </tbody>
             </table>
         {% else %}
-        <p>Confirmed collectors will showup here.</p>
+        <p>Confirmed collectors will show up here.</p>
         {% endif %}
     </div>
 </section>
