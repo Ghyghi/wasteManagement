@@ -230,7 +230,7 @@ def register_routes(app):
     def route_details(route_id):
         route = Routes.query.get_or_404(route_id)
         #Get the assigned collector
-        collector= RouteAssignment.query.filter_by(route_id=RouteAssignment.route_id).first()
+        collector= RouteAssignment.query.filter(route_id==RouteAssignment.route_id).first()
         return render_template('/admin/routeDetails.html', route=route, collector=collector)
     
     #Delete route
