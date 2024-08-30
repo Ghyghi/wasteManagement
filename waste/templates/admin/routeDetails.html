@@ -17,12 +17,14 @@
     <p><strong>Company ID:</strong> {{ route.company_id }}</p>
     <p><strong>Pickup Days:</strong> {{ route.pickup_days }}</p>
     <p><strong>Frequency:</strong> {{ route.frequency }}</p>
+    <p><strong>Collector ID:</strong> {{ collector.collector_id }}</p>
 </div>
 <div class="actions">
     <h3>Actions</h3>
 
-    <a href="{{ url_for('delete_route', route_id=route.route_id) }}" class="action-btn delete-btn">Delete Route</a>
-    <a href="{{ url_for('update_route', route_id=route.route_id) }}" class="action-btn schedule-btn">Update Route</a>
+    <a href="{{ url_for('delete_route', route_id=route.route_id) }}" class="action-btn delete-btn">Delete Route</a><br>
+    <a href="{{ url_for('update_route', route_id=route.route_id) }}" class="action-btn schedule-btn">Update Route</a><br>
+    <a href="{{ url_for('assign_collector') }}" class="action-btn schedule-btn">Assign collector</a>
 
 </div>
 {% endblock %}

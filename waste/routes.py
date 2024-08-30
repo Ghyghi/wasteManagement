@@ -222,16 +222,16 @@ def register_routes(app):
         admin_id = current_user.get_id()
         #Get the company routes and profile
         routes = Routes.query.filter_by(company_id=admin_id).all()
-        #Get the assigned collector
-        collectors= RouteAssignment.query.filter_by(company_id=admin_id).all
-        return render_template('/admin/viewRoutes.html', routes=routes, collectors=collectors)
+        return render_template('/admin/viewRoutes.html', routes=routes)
     
     #View route details
     @app.route('/route/view/<int:route_id>', methods=['GET','POST'])
     @login_required
     def route_details(route_id):
         route = Routes.query.get_or_404(route_id)
-        return render_template('/admin/routeDetails.html', route=route)
+        #Get the assigned collector
+        collector= RouteAssignment.query.filter_by(route_id=RouteAssignment.route_id).first()
+        return render_template('/admin/routeDetails.html', route=route, collector=collector)
     
     #Delete route
     @app.route('/route/delete/<int:route_id>', methods=['GET','POST'])
@@ -318,13 +318,13 @@ def register_routes(app):
             route = form.route.data
 
             #Check if the pair exists
-            pair = RouteAssignment.query.filter((RouteAssignment.route == route)).first()
+            pair = RouteAssignment.query.filter((RouteAssignment.route_id == route)).first()
             if pair:
                 flash_message('The route has already been assigned', 'danger')
                 print('The route has already been assigned')
                 return redirect(url_for('assign_collector'))
             else:
-                new_pair = RouteAssignment(collector=collector, company_id=company_id, route=route)
+                new_pair = RouteAssignment(collector_id=collector, company_id=company_id, route_id=route)
                 db.session.add(new_pair)
                 db.session.commit()
                 flash_message('The route has been assigned', 'success')
