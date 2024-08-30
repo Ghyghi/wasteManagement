@@ -181,6 +181,53 @@ def register_routes(app):
         company = AdminUser.query.filter_by(admin_id=admin_id).first()
         return render_template('admin/dashboard.html', routes=routes, company=company)
     
+    #Delete admin profile
+    @app.route('/admin/profile/delete/<int:admin_id>', methods=['GET'])
+    @login_required
+    def delete_profile_admin(admin_id):
+        admin = AdminUser.query.get(admin_id)
+        if admin:
+            # Delete all RouteAssignments associated with the admin
+            RouteAssignment.query.filter_by(company_id=admin.admin_id).delete()
+
+            # Delete all Routes associated with the admin
+            Routes.query.filter_by(company_id=admin.admin_id).delete()
+
+            # Delete all Collectors associated with the admin
+            CollectorUser.query.filter_by(company_id=admin.admin_id).delete()
+
+            # Delete the admin user
+            db.session.delete(admin)
+            db.session.commit()
+            
+            flash_message('Admin profile deleted successfully!', 'success')
+            return redirect(url_for('home'))
+        
+        flash_message('Admin not found.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+
+    #Update admin prifile
+    @app.route('/admin/profile/update', methods=['GET', 'POST'])
+    @login_required
+    def update_profile_admin():
+        admin_id=current_user.get_id()
+        admin=AdminUser.query.get(admin_id)
+        form=AdminRegisterForm(obj=admin)
+        if form.validate_on_submit():
+            admin.companyname=form.companyname.data
+            admin.adminemail=form.email.data
+            admin.password=form.password.data
+
+            try:
+                db.session.commit()
+                flash_message('Profile updated successfully.', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash_message(f'Error updating profile: {e}', 'danger')
+
+            return redirect(url_for('admin_dashboard'))
+        return render_template('/admin/updateProfile.html', form=form)
+    
     # Register a route
     @app.route('/route/register', methods=['GET', 'POST'])
     @login_required
@@ -222,7 +269,19 @@ def register_routes(app):
         admin_id = current_user.get_id()
         #Get the company routes and profile
         routes = Routes.query.filter_by(company_id=admin_id).all()
-        return render_template('/admin/viewRoutes.html', routes=routes)
+        assigned = db.session.query(RouteAssignment, Routes).join(
+        Routes, RouteAssignment.route_id == Routes.route_id
+    ).filter(RouteAssignment.company_id == admin_id).all()
+        return render_template('/admin/viewRoutes.html', routes=routes, assigned=assigned)
+    
+    #View pair details
+    @app.route('/pair/view', methods=['GET'])
+    @login_required
+    @admin_required
+    def pair_details():
+        admin_id = current_user.get_id()
+        pair = RouteAssignment.query.filter(RouteAssignment.company_id==admin_id).all()
+        return render_template('/admin/pairDetails.html', pair=pair)
     
     #View route details
     @app.route('/route/view/<int:route_id>', methods=['GET','POST'])
@@ -234,16 +293,51 @@ def register_routes(app):
         return render_template('/admin/routeDetails.html', route=route, collector=collector)
     
     #Delete route
-    @app.route('/route/delete/<int:route_id>', methods=['GET','POST'])
+    @app.route('/route/delete/<int:route_id>', methods=['GET', 'POST'])
     @login_required
     @admin_required
     def delete_route(route_id):
-        route = Routes.query.get_or_404(route_id)
-        db.session.delete(route)
-        db.session.commit()
-        flash_message('Route deleted successfully!', 'success')
+        route = Routes.query.get(route_id)
+        
+        if not route:
+            flash_message('Route not found.', 'danger')
+            return redirect(url_for('admin_dashboard'))
+
+        # Check if there are any assignments linked to this route
+        if route.assignments:
+            flash_message('Cannot delete route. It has associated assignments.', 'danger')
+            return redirect(url_for('admin_dashboard'))
+
+        try:
+            db.session.delete(route)
+            db.session.commit()
+            flash_message('Route deleted successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash_message(f'An error occurred: {e}', 'danger')
+        
         return redirect(url_for('admin_dashboard'))
     
+    #Delete route pair
+    @app.route('/pair/delete/<int:pair_id>', methods=['GET', 'POST'])
+    @login_required
+    @admin_required
+    def delete_pair(pair_id):
+        pair = RouteAssignment.query.get(pair_id)
+        
+        if not pair:
+            flash_message('Pair not found.', 'danger')
+            return redirect(url_for('admin_dashboard'))
+        try:
+            db.session.delete(pair)
+            db.session.commit()
+            flash_message('Pair deleted successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash_message(f'An error occurred: {e}', 'danger')
+        
+        return redirect(url_for('admin_dashboard'))
+
     #Update route
     @app.route('/route/update/<int:route_id>', methods=['GET','POST'])
     @login_required
@@ -252,7 +346,7 @@ def register_routes(app):
         route = Routes.query.filter_by(route_id=route_id).first()
 
         if not route:
-            flash('Route not found.', 'danger')
+            flash_message('Route not found.', 'danger')
             return redirect(url_for('admin_dashboard'))
         
         form = UpdateRouteForm(obj=route)
@@ -263,10 +357,10 @@ def register_routes(app):
 
             try:
                 db.session.commit()
-                flash('Route updated successfully.', 'success')
+                flash_message('Route updated successfully.', 'success')
             except Exception as e:
                 db.session.rollback()
-                flash(f'Error updating route: {e}', 'danger')
+                flash_message(f'Error updating route: {e}', 'danger')
 
             return redirect(url_for('admin_dashboard'))
         return render_template('/admin/updateRoute.html', form=form, route=route)
@@ -458,11 +552,8 @@ def register_routes(app):
     @app.route('/collector/routes', methods=['GET'])
     def collector_routes():
         collector_id = current_user.get_id()
-        routess = RouteAssignment.query.filter(RouteAssignment.collector_id==collector_id).first()
-        if routess:
-            company = Routes.query.filter(Routes.route_id == routess.route_id).first()
-        else:
-            company = None
+        routess = RouteAssignment.query.filter(RouteAssignment.collector_id==collector_id).all()
+        company = Routes.query.filter(Routes.company_id == CollectorUser.company_id).first()
         return render_template('/collector/myRoutes.html', routess=routess, company=company)
     
     #Collector profile
@@ -473,3 +564,42 @@ def register_routes(app):
         company = AdminUser.query.filter(AdminUser.admin_id==collector.company_id).first()
         route_count = RouteAssignment.query.filter(RouteAssignment.collector_id==collector_id).count()
         return render_template('/collector/profile.html', collector=collector, company=company, route_count=route_count)
+    
+    #Collector profile update
+    @app.route('/collector/profile/update', methods=['GET', 'POST'])
+    def update_profile_collector():
+        collector_id = current_user.get_id()
+        collector = CollectorUser.query.filter(CollectorUser.collector_id==collector_id).first()
+        form=CollectorProfileForm(obj=collector)
+
+        if form.validate_on_submit():
+            collector.collectoremail=form.collectoremail.data
+            collector.password=form.password.data
+            try:
+                db.session.commit()
+                flash_message('Profile updated successfully.', 'success')
+                return redirect(url_for('collector_profile'))
+            except Exception as e:
+                db.session.rollback()
+                flash_message(f'Error updating profile: {e}', 'danger')
+            return redirect(url_for('collector_profile'))
+        return render_template('/collector/update_profile.html', form=form)
+    
+    #Collector profile delete
+    @app.route('/collector/profile/delete/<int:collector_id>', methods=['GET'])
+    @login_required
+    def delete_profile_collector(collector_id):
+        collector = CollectorUser.query.get(collector_id)
+        if collector:
+            # Delete all RouteAssignments associated with the collector
+            RouteAssignment.query.filter_by(collector_id=collector.collector_id).delete()
+            
+            # Delete the collector
+            db.session.delete(collector)
+            db.session.commit()
+            
+            flash_message('Collector profile deleted successfully!', 'success')
+            return redirect(url_for('home'))
+        
+        flash_message('Collector not found.', 'danger')
+        return redirect(url_for('collector_dashboard'))

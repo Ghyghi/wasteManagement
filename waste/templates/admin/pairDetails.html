@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>Pair Details</title>
+{% endblock %}
+
+{% block header %}
+    {% include 'admin/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <h2 class="mb-4">Pair Details</h2>
+
+    <!-- Pair Details Section -->
+    {% if pair %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Pair ID</th>
+                        <th>Company ID</th>
+                        <th>Collector ID</th>
+                        <th>Route ID</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pair %}
+                        <tr>
+                            <td>{{ p.pair_id }}</td>
+                            <td>{{ p.company_id }}</td>
+                            <td>{{ p.collector_id }}</td>
+                            <td>{{ p.route_id }}</td>
+                            <td><a href="{{ url_for('delete_pair', pair_id=p.pair_id) }}" class="btn btn-danger">Delete Pair</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No pair details available.</p>
+    {% endif %}
+
+
+</div>
+{% endblock %}

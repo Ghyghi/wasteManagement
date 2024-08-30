@@ -9,23 +9,75 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="dashboard-container">
     <h1>Collector Dashboard</h1>
+
+    <div class="overview-sections">
+        <div class="section">
+            <h4>Scheduled Collections</h4>
+            <p>Details about upcoming scheduled collections will appear here.</p>
+        </div>
+        
+        <div class="section">
+            <h4>Pending Tasks</h4>
+            <p>List of pending tasks and actions required will be shown here.</p>
+        </div>
+        
+        <div class="section">
+            <h4>Past Collections</h4>
+            <p>Overview of past collections, including dates and details, will be displayed here.</p>
+        </div>
+        
+        <div class="section">
+            <h4>Metrics</h4>
+            <p>Performance metrics and statistics will be presented here.</p>
+        </div>
+        
+        <div class="section">
+            <h4>Number of Users</h4>
+            <p>Total number of users and relevant details will be shown here.</p>
+        </div>
+    </div>
 </div>
-<h2>Tasks overview</h2>
-<div>
-    <h4>Scheduled Collections</h4>
-</div>
-<div>
-    <h4>Pending Tasks</h4>
-</div>
-<div>
-    <h4>Past Collections</h4>
-</div>
-<div>
-    <h4>Metrics</h4>
-</div>
-<div>
-    <h4>Number of users</h4>
-</div>
+
+<style>
+    .dashboard-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 1000px;
+        margin: 2rem auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #0693e3;
+        margin-bottom: 1rem;
+    }
+
+    .overview-sections {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section {
+        flex: 1;
+        background-color: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+    }
+
+    .section h4 {
+        color: #0693e3;
+        margin-bottom: 0.5rem;
+    }
+
+    .section p {
+        color: #333;
+    }
+</style>
 {% endblock %}

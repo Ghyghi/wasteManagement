@@ -11,12 +11,11 @@
 <div class="container my-4">
     <!-- Header Section -->
     <div class="text-center mb-4">
-        <h1>Your Routes</h1>
+        <h1>Company Routes</h1>
     </div>
 
     <!-- Routes Section -->
     <section id="your-routes" class="mb-4">
-        <h3>Your Routes</h3>
         {% if routes|length == 0 %}
             <p>You don't have any routes yet.</p>
             <a href="{{ url_for('route_register') }}" class="btn btn-primary">Create a route</a>
@@ -52,12 +51,43 @@
         {% endif %}
     </section>
 
+    <!-- Assigned Routes Section -->
+    <section class="mb-4">
+        <h3>Assigned Routes</h3>
+        {% if assigned|length == 0 %}
+            <p>No routes have been assigned yet.</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Pair ID</th>
+                            <th>Collector</th>
+                            <th>Route Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment, route in assigned %}
+                        <tr>
+                            <td>{{ assignment.pair_id }}</td>
+                            <td>{{ assignment.collector_id }}</td>
+                            <td>{{ route.route_name }}</td>
+                            <td> 
+                                <a href="{{ url_for('pair_details', pair_id=assignment.pair_id) }}" class="btn btn-info btn-sm">View Pair</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </section>
+
     <!-- Actions Section -->
     <section class="mt-4">
         <h3>Actions</h3>
-        <form action="{{ url_for('route_register') }}" method="post">
-            <button type="submit" class="btn btn-success">Create Route</button>
-        </form>
+        <a href="{{ url_for('route_register') }}" class="btn btn-success">Create Route</a>
     </section>
 </div>
 {% endblock %}

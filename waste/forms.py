@@ -47,7 +47,7 @@ class AdminRegisterForm(FlaskForm):
     companyname = StringField('Company Name', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     email = EmailField('Email', validators=[InputRequired()])
-    submit = SubmitField('Register')
+    submit = SubmitField('Submit')
 class AdminLoginForm(FlaskForm):
     companyname = StringField('Company Name', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
@@ -100,3 +100,8 @@ class AssignmentForm(FlaskForm):
     collector=IntegerField("Enter the collector's ID", validators=[InputRequired()])
     route=IntegerField("Enter the route ID", validators=[InputRequired()])
     submit=SubmitField("Assign")
+
+class CollectorProfileForm(FlaskForm):
+    collectoremail=EmailField('Your email', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
+    submit = SubmitField('Update')

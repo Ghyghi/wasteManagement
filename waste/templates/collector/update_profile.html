@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Update Profile</title>
+{% endblock %}
+
+{% block header %}
+    {% include 'collector/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Update Profile</h2>
+    <form action="{{ url_for('update_profile_collector') }}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <!-- Email Input -->
+        <div class="form-group">
+            {{ form.collectoremail.label }}
+            {{ form.collectoremail(class="form-control", placeholder="Enter your email") }}
+            <div class="invalid-feedback">Please enter a valid email address.</div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control", placeholder="Enter your new password") }}
+            <div class="invalid-feedback">Please enter your password.</div>
+        </div>
+
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

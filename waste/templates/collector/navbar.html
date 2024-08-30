@@ -1,7 +1,38 @@
-
 <nav>
-    <a href="{{ url_for('collector_dashboard') }}">Dashboard</a>
-    <a href="{{ url_for('collector_routes') }}">My Routes</a>
-    <a href="{{ url_for('collector_profile') }}">Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <ul class="nav-list">
+        <li><a href="{{ url_for('collector_dashboard') }}" class="{{ 'active' if request.endpoint == 'collector_dashboard' else '' }}">Dashboard</a></li>
+        <li><a href="{{ url_for('collector_routes') }}" class="{{ 'active' if request.endpoint == 'collector_routes' else '' }}">My Routes</a></li>
+        <li><a href="{{ url_for('collector_profile') }}" class="{{ 'active' if request.endpoint == 'collector_profile' else '' }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}" class="{{ 'active' if request.endpoint == 'logout' else '' }}">Logout</a></li>
+    </ul>
 </nav>
+
+<style>
+    nav {
+        background-color: #0693e3;
+        padding: 1rem;
+        color: white;
+    }
+    .nav-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: space-around;
+    }
+    .nav-list li {
+        margin: 0;
+    }
+    .nav-list a {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    .nav-list a:hover,
+    .nav-list a.active {
+        background-color: #0577c0;
+    }
+</style>

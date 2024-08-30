@@ -9,27 +9,71 @@
 {% endblock %}
 
 {% block content %}
-<section>
+<section class="profile-info">
     <h1>Collector Profile</h1>
-    <div>
+    
+    <div class="info-section">
         <h3>Collector Information</h3>
         <p><strong>Collector ID: </strong>{{ collector.collector_id }}</p>
         <p><strong>First Name: </strong>{{ collector.firstname }}</p>
         <p><strong>Second Name: </strong>{{ collector.secondname }}</p>
         <p><strong>Email: </strong>{{ collector.collectoremail }}</p>
     </div>
-    <div>
+
+    <div class="info-section">
         <h3>Company Information</h3>
         <p><strong>Company ID: </strong>{{ collector.company_id }}</p>
         <p><strong>Company Name: </strong>{{ company.companyname }}</p>
         <p><strong>Routes Covered: </strong>You cover {{ route_count }} route(s)</p>
-        <p>To see the complete list of covered routes, click<a href="{{ url_for('collector_routes') }}"> here</a></p>
+        <p>To see the complete list of covered routes, click <a href="{{ url_for('collector_routes') }}">here</a></p>
     </div>
 </section>
-<section>
+
+<section class="actions">
     <div>
         <h3>Actions</h3>
-
+        <a href="{{ url_for('update_profile_collector') }}" class="btn btn-primary">Update Profile</a>
+        <a href="{{ url_for('delete_profile_collector', collector_id=collector.collector_id) }}" class="btn btn-danger">Delete Profile</a>
     </div>
 </section>
+
+<style>
+    .profile-info {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    .info-section {
+        margin-bottom: 2rem;
+    }
+    .info-section h3 {
+        color: #0693e3;
+        margin-bottom: 1rem;
+    }
+    .info-section p {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .actions {
+        text-align: center;
+        margin-top: 2rem;
+    }
+    .btn-primary {
+        background-color: #0693e3;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        text-decoration: none;
+    }
+    .btn-primary:hover {
+        background-color: #0577c0;
+    }
+</style>
 {% endblock %}

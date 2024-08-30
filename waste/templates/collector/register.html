@@ -2,33 +2,49 @@
 {% block head %}
 <title>Collector Register</title>
 {% endblock %}
+
 {% block content %}
 <div class="container">
     <h2>Collector Register</h2>
     <form id="registerForm" method="POST" action="/collector/register" novalidate>
         {{ form.hidden_tag() }}
 
+        <!-- First Name Input -->
         <div class="form-group">
             {{ form.firstname.label }}
             {{ form.firstname(class="form-control", placeholder="Enter your first name") }}
+            <div class="invalid-feedback">Please enter your first name.</div>
         </div>
+
+        <!-- Second Name Input -->
         <div class="form-group">
             {{ form.secondname.label }}
             {{ form.secondname(class="form-control", placeholder="Enter your second name") }}
+            <div class="invalid-feedback">Please enter your second name.</div>
         </div>
+
+        <!-- Company ID Input -->
         <div class="form-group">
             {{ form.company_id.label }}
-            {{ form.company_id(class="form-control", placeholder="Enter Your company ID") }}
+            {{ form.company_id(class="form-control", placeholder="Enter your company ID") }}
+            <div class="invalid-feedback">Please enter a valid company ID.</div>
         </div>
+
+        <!-- Email Input -->
         <div class="form-group">
             {{ form.collectoremail.label }}
             {{ form.collectoremail(class="form-control", placeholder="Enter your email") }}
+            <div class="invalid-feedback">Please enter a valid email address.</div>
         </div>
 
+        <!-- Password Input -->
         <div class="form-group">
             {{ form.password.label }}
             {{ form.password(class="form-control", placeholder="Enter your password") }}
+            <div class="invalid-feedback">Please enter your password.</div>
         </div>
+
+        <!-- Submit Button -->
         {{ form.submit(class="btn btn-primary") }}
     </form>
 </div>
@@ -36,8 +52,6 @@
 <style>
     body {
         font-family: 'Arial', sans-serif;
-        background: url('/static/images/hub-1.jpg') no-repeat center center fixed;
-        background-size: cover;
         color: #fff;
     }
     .container {
@@ -77,6 +91,9 @@
         cursor: pointer;
         border-radius: 4px;
         transition: background-color 0.3s;
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
     }
     .btn-primary:hover {
         background-color: #0577c0;
@@ -87,4 +104,42 @@
         display: none;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const inputs = form.querySelectorAll('.form-control');
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                    input.nextElementSibling.style.display = 'block';
+                } else {
+                    input.classList.remove('is-invalid');
+                    input.nextElementSibling.style.display = 'none';
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                if (input.value.trim()) {
+                    input.classList.remove('is-invalid');
+                    input.nextElementSibling.style.display = 'none';
+                } else {
+                    input.classList.add('is-invalid');
+                    input.nextElementSibling.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -22,12 +22,13 @@
             </div>
         </div>
 
-        <!-- Reviews Section -->
+        <!-- Action Section -->
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="card-title">Reviews</h3>
-                    <!-- Add review content here -->
+                    <h3 class="card-title">Actions</h3>
+                    <a href="{{ url_for('update_profile_admin') }}" class="btn btn-primary">Update Profile</a>
+        <a href="{{ url_for('delete_profile_admin', admin_id=company.admin_id) }}" class="btn btn-danger">Delete Profile</a>
                 </div>
             </div>
         </div>
