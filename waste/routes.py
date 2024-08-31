@@ -603,3 +603,5 @@ def register_routes(app):
         
         flash_message('Collector not found.', 'danger')
         return redirect(url_for('collector_dashboard'))
+    
+    #Collector view upcoming schedules
