@@ -126,7 +126,7 @@ def create_calendar_reminder(user_emails, user_location, startdate, user_choice)
     except HttpError as error:
         print(f'An error occurred: {error}')
 
-def send_email_notification(user_emails, summary):
+def send_email_notification(user_emails, summary, user_location):
     subject = f"New Reminder Created: {summary}"
     body = (
     f"Your reminder for your upcoming trash pickup at {user_location} has been created.\n"

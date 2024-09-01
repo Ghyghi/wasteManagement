@@ -35,53 +35,22 @@ def register_routes(app):
     def home():
         return render_template('index.html')
     
-    # Email Confirmation Route
-    @app.route('/confirm/<token>')
-    def confirm_email(token):
-        try:
-            email = confirm_token(token)
-        except:
-            flash_message('The confirmation link is invalid or has expired.', 'danger')
-            return redirect(url_for('resend_confirmation'))
-
-        # Check for the user in all user types
-        admin_user = AdminUser.query.filter_by(adminemail=email).first()
-        house_user = HouseUser.query.filter_by(houseemail=email).first()
-        users = [admin_user, house_user]
-
-        for user in users:
-            if user:  # Check if user exists
-                if user.confirmed:
-                    flash_message('Account already confirmed. Please log in.', 'success')
-                else:
-                    user.confirmed = True
-                db.session.commit()
-                flash_message('You have confirmed your account. Thanks!', 'success')
-                if isinstance(user, AdminUser):
-                    return redirect(url_for('admin_login'))
-                elif isinstance(user, HouseUser):
-                    return redirect(url_for('login'))
-                else:
-                    flash_message('Invalid account type', 'danger')
-        flash_message('No account found for this email.', 'danger')
-        return redirect(url_for('resend_confirmation'))
-    
     #Re-send Confirmation Email
     @app.route('/resend_confirmation', methods=['GET', 'POST'])
     def resend_confirmation():
         form = ResendConfirmationForm()
         if form.validate_on_submit():
             email = form.email.data
-            admin_user = AdminUser.query.filter_by(adminemail=email).first()
-            house_user = HouseUser.query.filter_by(houseemail=email).first()
+            admin_user = AdminUser.query.filter(adminemail=email).first()
+            house_user = HouseUser.query.filter(houseemail=email).first()
             users = [admin_user, house_user]
             
             for user in users:
                 if user and not user.confirmed:
                     if isinstance(user, AdminUser):
-                        send_confirmation_email(user.adminemail)
+                        confirm_admin(user.adminemail)
                     elif isinstance(user, HouseUser):
-                        send_confirmation_email(user.houseemail)
+                        confirm_house(user.houseemail)
                     else:
                         flash_message('Invalid account type', 'danger')
                     
@@ -138,7 +107,7 @@ def register_routes(app):
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('A confirmaton email has been sent to you email. Please confirm before you proceed to login,', 'success')
-                send_confirmation_email(email)
+                confirm_admin(email)
                 return redirect(url_for('admin_login'))
         return render_template('admin/register.html', form=form)
     
@@ -167,6 +136,24 @@ def register_routes(app):
                 return redirect(url_for('admin_login'))
         return render_template('admin/login.html', form=form)
     
+    # Email Confirmation Route
+    @app.route('/admin/confirm/<token>')
+    def confirm_email(token):
+        try:
+            email = confirm_token(token)
+        except:
+            flash_message('The confirmation link is invalid or has expired.', 'danger')
+            return redirect(url_for('resend_confirmation'))
+
+        user = AdminUser.query.filter(AdminUser.adminemail==email).first_or_404()
+        if user.confirmed:
+            flash_message('Account already confirmed. Please log in.', 'success')
+        else:
+            user.confirmed = True
+            db.session.commit()
+            flash_message('You have confirmed your account. Thanks!', 'success')
+        return redirect(url_for('admin_login'))
+
     # Admin Dashboard Route
     @app.route('/admin/dashboard')
     @login_required
@@ -426,6 +413,33 @@ def register_routes(app):
                 return redirect(url_for('view_route'))
         return render_template('/admin/assignCollector.html', form=form)
     
+    #Create a schedule
+    @app.route('/admin/schedule/create', methods=['GET', 'POST'])
+    @login_required
+    @admin_required
+    def create_schedule():
+        form=ScheduleForm()
+        if form.validate_on_submit():
+            collector_id=form.collector_id.data
+            route_id=form.route_id.data
+            company_id = current_user.get_id()
+            house_clients = HouseClient.query.filter(HouseClient.company_id==company_id).all()
+
+            #Check schedule availability
+            existing_schedule=Schedule.query.filter(Schedule.route_id==route_id).first()
+            if existing_schedule:
+                flash_message('Route already has a corresponding schedule.', 'danger')
+                return redirect(url_for('admin_dashboard'))
+            else:
+
+                for house in house_clients:
+                    new_schedule=Schedule(company_id=company_id, collector_id=collector_id, route_id=route_id, house_id=house.house_id)
+                    db.session.add(new_schedule)
+                    flash_message('Schedule created.', 'success')
+                db.session.commit()
+                return redirect(url_for('admin_dashboard'))
+        return render_template('/admin/createSchedule.html', form=form)
+    
     ########### House APIs##################################################
     
     # House register route
@@ -451,11 +465,29 @@ def register_routes(app):
                 new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
-                send_confirmation_email(new_user.houseemail)
+                confirm_house(new_user.houseemail)
                 flash_message('A confirmation email has been sent via email. Please confirm your email to log in.', 'success')
                 return redirect(url_for('login'))
             
         return render_template('house/register.html', form=form)
+
+    # Email Confirmation Route
+    @app.route('/house/confirm/<token>')
+    def confirm_email_house(token):
+        try:
+            email = confirm_token(token)
+        except:
+            flash_message('The confirmation link is invalid or has expired.', 'danger')
+            return redirect(url_for('resend_confirmation'))
+
+        user = HouseUser.query.filter(HouseUser.houseemail==email).first_or_404()
+        if user.confirmed:
+            flash_message('Account already confirmed. Please log in.', 'success')
+        else:
+            user.confirmed = True
+            db.session.commit()
+            flash_message('You have confirmed your account. Thanks!', 'success')
+        return redirect(url_for('login'))
 
     # House Login Route
     @app.route('/house/login', methods=['GET', 'POST'])
@@ -510,7 +542,7 @@ def register_routes(app):
 
             if user and user.password==password:
                 if not user.confirmed:
-                    flash_message("Please wait for your admin to verify you.", 'Warning')
+                    flash_message("Please wait for your admin to verify you.", 'warning')
                     return redirect(url_for('home'))
                 else:
                     login_user(user)

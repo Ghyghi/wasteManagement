@@ -100,8 +100,11 @@ class AssignmentForm(FlaskForm):
     collector=IntegerField("Enter the collector's ID", validators=[InputRequired()])
     route=IntegerField("Enter the route ID", validators=[InputRequired()])
     submit=SubmitField("Assign")
-
 class CollectorProfileForm(FlaskForm):
     collectoremail=EmailField('Your email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Update')
+class ScheduleForm(FlaskForm):
+    collector_id=IntegerField("Enter the collector's ID", validators=[InputRequired()])
+    route_id=IntegerField("Enter the route ID", validators=[InputRequired()])
+    submit = SubmitField('Create')
