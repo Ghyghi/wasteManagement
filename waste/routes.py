@@ -563,7 +563,11 @@ def register_routes(app):
     @app.route('/collector/dashboard')
     @login_required
     def collector_dashboard():
-        return render_template('collector/dashboard.html')
+        collector_id=current_user.get_id()
+        company = Schedule.query.filter_by(collector_id=collector_id).first()
+        schedule=Schedule.query.filter_by(collector_id=collector_id).count()
+        houses=HouseClient.query.filter_by(company_id=company.company_id).count()
+        return render_template('collector/dashboard.html', schedule=schedule, houses=houses)
     
     #Collector Login
     @app.route('/collector/login', methods=['GET', 'POST'])
@@ -671,5 +675,3 @@ def register_routes(app):
         
         flash_message('Collector not found.', 'danger')
         return redirect(url_for('collector_dashboard'))
-    
-    #Collector view upcoming schedules
