@@ -16,6 +16,10 @@ class HouseUser(db.Model, UserMixin):
     is_house = db.Column(db.Boolean, default=True, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
+    # Relationship with Schedule and HouseClient
+    schedules = relationship('Schedule', backref='house_user', lazy=True)
+    house_clients = relationship('HouseClient', backref='house_user', lazy=True)
+
     def get_id(self):
         return str(self.house_id)
 
@@ -30,8 +34,11 @@ class AdminUser(db.Model, UserMixin):
     is_house = db.Column(db.Boolean, default=False, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    # Relationship with Routes
+    # Relationships with Routes, RouteAssignment, Schedule, and HouseClient
     routes = relationship('Routes', backref='company', lazy=True)
+    route_assignments = relationship('RouteAssignment', backref='admin_user', lazy=True)
+    schedules = relationship('Schedule', backref='admin_user', lazy=True)
+    house_clients = relationship('HouseClient', backref='admin_user', lazy=True)
 
     def get_id(self):
         return str(self.admin_id)
@@ -49,11 +56,10 @@ class CollectorUser(db.Model, UserMixin):
     is_house = db.Column(db.Boolean, default=False, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    # Relationship with AdminUser (company)
+    # Relationship with AdminUser (company), RouteAssignment, and Schedule
     company = relationship('AdminUser', backref='collectors')
-
-    # Relationship with RouteAssignment
     route_assignments = relationship('RouteAssignment', backref='collector', lazy=True)
+    schedules = relationship('Schedule', backref='collector', lazy=True)
 
     def get_id(self):
         return str(self.collector_id)
@@ -66,8 +72,10 @@ class Routes(db.Model):
     pickup_days = db.Column(db.String(255), nullable=False)
     frequency = db.Column(db.String(255), nullable=False)
 
-    # Relationship with RouteAssignment
+    # Relationship with RouteAssignment, Schedule, and HouseClient
     assignments = relationship('RouteAssignment', backref='route', lazy=True)
+    schedules = relationship('Schedule', backref='route', lazy=True)
+    house_clients = relationship('HouseClient', backref='route', lazy=True)
 
 class RouteAssignment(db.Model):
     __tablename__ = 'routeassignment'
@@ -89,3 +97,4 @@ class HouseClient(db.Model):
     client_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     house_id = db.Column(db.Integer, db.ForeignKey('houseuser.house_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client'), nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client_admin'), nullable=False)
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_client'), nullable=False)

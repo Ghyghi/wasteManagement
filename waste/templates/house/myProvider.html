@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Provier Details</title>
+{% endblock %}
+{% block header %}
+{% include 'house/navbar.html' %}
+{% endblock %}
+{% block content %}
+<div>
+    <section>
+        <div>
+            <div>
+                <div>
+                    <h3>Company Details</h3>
+                    <p><strong>Company Name: </strong>{{ regcompany.admin_user.companyname }}</p>
+                    <p><strong>Pickup Days: </strong>{{ regcompany.route.pickup_days }}</p>
+                    <p><strong>Frequency: </strong>{{ regcompany.route.frequency }}</p>
+                    <p><strong>Route Name: </strong>{{ regcompany.route.route_name }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

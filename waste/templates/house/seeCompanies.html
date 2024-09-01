@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}
+<title>See Companies</title>
+{% endblock %}
+{% block header %}
+{% include 'house/navbar.html' %}
+{% endblock %}
+{% block content %}
+<section>
+    <h1>Available Companies</h1>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Route Name</th>
+                    <th>Route ID</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in company %}
+                    {% for r in item.routes %}
+                        <tr>
+                            <td>{{ item.companyname }}</td>
+                            <td>{{ r.route_name }}</td>
+                            <td>{{ r.route_id }}</td>
+                            <td><a href="{{ url_for('join_route', route_id=r.route_id) }}">Join Route</a></td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

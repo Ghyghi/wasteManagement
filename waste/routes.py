@@ -520,6 +520,42 @@ def register_routes(app):
     @login_required
     def house_dashboard():
         return render_template('house/dashboard.html')
+    
+    #Join a company
+    @app.route('/house/join/<int:route_id>', methods=['GET'])
+    @login_required
+    def join_route(route_id):
+        house_id=current_user.get_id()
+        route=route_id
+        company=Routes.query.filter(Routes.route_id==route).first()
+        company_id=company.company_id
+
+        existing_client=HouseClient.query.filter_by(house_id=house_id).first()
+        if existing_client:
+            flash_message('You are already part of this company.', 'danger')
+            return redirect(url_for('house_dashboard'))
+        else:
+            new_client=HouseClient(house_id=house_id, company_id=company_id, route_id=route)
+            db.session.add(new_client)
+            db.session.commit()
+            flash_message('You have been registered to this route.', 'success')
+        return redirect(url_for('view_provider'))
+    
+    #View the company you belong to
+    @app.route('/house/my-provider', methods=['GET'])
+    @login_required
+    def view_provider():
+        house_id=current_user.get_id()
+        regcomp = HouseClient.query.filter(HouseClient.house_id==house_id).first()
+        if regcomp:
+            regcompany= HouseClient.query.filter_by(house_id=house_id).first()
+
+            return render_template('house/myProvider.html', regcompany=regcompany)
+        else:
+            flash_message('You are not registered to any company, first register to one.', 'danger')
+            company= AdminUser.query.all()
+            routes= Routes.query.all()
+            return render_template('house/seeCompanies.html', company=company, routes=routes)
 
     ####### Collector APIs##################################################
     
