@@ -95,14 +95,14 @@ class CollectorLoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Login')
 class AssignmentForm(FlaskForm):
-    collector=IntegerField("Enter the collector's ID", validators=[InputRequired()])
-    route=IntegerField("Enter the route ID", validators=[InputRequired()])
+    collector=StringField("Enter the collector's ID", validators=[InputRequired()])
+    route=StringField("Enter the route ID", validators=[InputRequired()])
     submit=SubmitField("Assign")
 class CollectorProfileForm(FlaskForm):
     collectoremail=EmailField('Your email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Update')
-class ScheduleForm(FlaskForm):
-    collector_id=StringField("Enter the collector's ID", validators=[InputRequired()])
-    route_id=StringField("Enter the route ID", validators=[InputRequired()])
-    submit = SubmitField('Create')
+# class ScheduleForm(FlaskForm):
+#     collector_id=StringField("Enter the collector's ID", validators=[InputRequired()])
+#     route_id=StringField("Enter the route ID", validators=[InputRequired()])
+#     submit = SubmitField('Create')

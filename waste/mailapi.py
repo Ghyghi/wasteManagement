@@ -88,9 +88,9 @@ def create_calendar_reminder(user_emails, user_location, startdate, user_choice)
     service = get_calendar_service()
     
     try:
-        if user_choice == 'weekly':
+        if user_choice == 'Weekly':
             recurrence_rule = 'RRULE:FREQ=WEEKLY;INTERVAL=1'
-        elif user_choice == 'monthly':
+        elif user_choice == 'Monthly':
             recurrence_rule = 'RRULE:FREQ=MONTHLY;INTERVAL=1'
         else:
             raise ValueError("Invalid recurrence frequency chosen")
@@ -134,19 +134,3 @@ def send_email_notification(user_emails, summary, user_location):
 )
     for email in user_emails:
         send_email(email, subject, body)
-
-# if __name__=="__main__":
-#     get_credentials()
-#     get_gmail_service()
-#     get_calendar_service()
-#     email='nagasaroghislaine3@gmail.com'
-#     subject='Test Email'
-#     html_content='This is a test'
-#     send_email(email, subject, html_content)
-#     user_emails =['nagasaroghislaine3@gmail.com', 'n.iyankijij@alustudent.com']
-#     summary = 'remainder'
-#     user_location = 'Kk191st, Kabeza'
-#     startdate = '2024-08-22T00:00:00+02:00'
-#     user_choice = 'weekly'
-#     create_calendar_reminder(user_emails, user_location, startdate, user_choice)
-#     send_email_notification(user_emails, summary)

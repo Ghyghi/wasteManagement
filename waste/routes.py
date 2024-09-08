@@ -447,32 +447,52 @@ def register_routes(app):
         return render_template('/admin/assignCollector.html', form=form)
     
     #Create a schedule
-    @app.route('/admin/schedule/create', methods=['GET', 'POST'])
+    @app.route('/admin/schedule/create/<string:route_id>', methods=['GET', 'POST'])
     @login_required
     @admin_required
-    def create_schedule():
-        form=ScheduleForm()
-        if form.validate_on_submit():
-            collector_id=form.collector_id.data
-            route_id=form.route_id.data
-            company_id = current_user.get_id()
-            house_clients = HouseClient.query.filter(HouseClient.company_id==company_id).all()
-            schedule_id = generate_random_other()
+    def create_schedule(route_id):
+        # Retrieve route details
+        route = Routes.query.filter_by(route_id=route_id).first()
+        if not route:
+            # Handle case where route is not found
+            flash_message("Route not found.", "danger")
+            return redirect(url_for('admin_dashboard'))
+        location = route.route_name
+        date = route.pickup_days
+        choice = route.frequency
 
-            #Check schedule availability
-            existing_schedule=Schedule.query.filter(Schedule.route_id==route_id).first()
-            if existing_schedule:
-                flash_message('Route already has a corresponding schedule.', 'danger')
-                return redirect(url_for('admin_dashboard'))
-            else:
+        # Retrieve assigned company and collector details
+        assigned = RouteAssignment.query.filter_by(route_id=route_id).first()
+        if not assigned:
+            flash_message("No route assignment found for this route.", "danger")
+            return redirect(url_for('admin_dashboard'))
+        company = assigned.company_id
+        collector = CollectorUser.query.filter_by(company_id=company).first()
+        if not collector:
+            flash("No collector found for this route.", "danger")
+            return redirect(url_for('admin_dashboard'))
+        collector_email = collector.collectoremail
 
-                for house in house_clients:
-                    new_schedule=Schedule(schedule_id = schedule_id, company_id=company_id, collector_id=collector_id, route_id=route_id, house_id=house.house_id)
-                    db.session.add(new_schedule)
-                    flash_message('Schedule created.', 'success')
-                db.session.commit()
-                return redirect(url_for('admin_dashboard'))
-        return render_template('/admin/createSchedule.html', form=form)
+        # Retrieve all house clients associated with the route
+        houses = HouseClient.query.filter_by(route_id=route_id).all()
+
+        # Collect emails of all house users linked to the route
+        house_emails = []
+        for house in houses:
+            house_user = HouseUser.query.filter_by(house_id=house.house_id).first()
+            if house_user:
+                house_emails.append(house_user.houseemail)
+
+        # Combine collector email with house emails
+        emails = [collector_email] + house_emails
+
+        # Schedule the event and send notifications
+        create_calendar_reminder(emails, location, date, choice)
+        summary = "Trash pickup reminder"
+        send_email_notification(emails, summary, location)
+        print('Schedule created successfully')
+        flash_message("Reminders created", 'success')
+        return redirect(url_for('admin_dashboard'))
     
     ########### House APIs##################################################
     
@@ -600,10 +620,9 @@ def register_routes(app):
     @login_required
     def collector_dashboard():
         collector_id=current_user.get_id()
-        company = Schedule.query.filter_by(collector_id=collector_id).first()
-        schedule=Schedule.query.filter_by(collector_id=collector_id).count()
+        company = CollectorUser.query.filter_by(collector_id=collector_id).first()
         houses=HouseClient.query.filter_by(company_id=company.company_id).count()
-        return render_template('collector/dashboard.html', schedule=schedule, houses=houses)
+        return render_template('collector/dashboard.html', houses=houses)
     
     #Collector Login
     @app.route('/collector/login', methods=['GET', 'POST'])
@@ -690,7 +709,7 @@ def register_routes(app):
                 return redirect(url_for('collector_profile'))
             except Exception as e:
                 db.session.rollback()
-                flash_message(f'Error updating profile: {e}', 'danger')
+                flash_message(f'danger updating profile: {e}', 'danger')
             return redirect(url_for('collector_profile'))
         return render_template('/collector/update_profile.html', form=form)
     
