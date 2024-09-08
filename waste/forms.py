@@ -74,7 +74,6 @@ class ForgotPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     submit = SubmitField('Reset Password')
 class RoutesForm(FlaskForm):
-    company = IntegerField('Company ID', validators=[InputRequired()])
     days = SelectField('Pickup Day', choices=days_of_the_week, validators=[InputRequired()])
     district = SelectField('Choose District', choices=districts, validators=[InputRequired()])
     sector = SelectField('Choose Sector', choices=sectors, validators=[InputRequired()])
@@ -87,7 +86,7 @@ class UpdateRouteForm(FlaskForm):
 class CollectorRegisterForm(FlaskForm):
     firstname = StringField('First Name', validators=[InputRequired()])
     secondname = StringField('Second Name', validators=[InputRequired()])
-    company_id = IntegerField('Company ID', validators=[InputRequired()])
+    company_id = StringField('Company ID', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     collectoremail = EmailField('Your email', validators=[InputRequired()])
     submit = SubmitField('Register')
@@ -96,7 +95,6 @@ class CollectorLoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Login')
 class AssignmentForm(FlaskForm):
-    company_id=IntegerField('Enter the company ID', validators=[InputRequired()])
     collector=IntegerField("Enter the collector's ID", validators=[InputRequired()])
     route=IntegerField("Enter the route ID", validators=[InputRequired()])
     submit=SubmitField("Assign")
@@ -105,6 +103,6 @@ class CollectorProfileForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Update')
 class ScheduleForm(FlaskForm):
-    collector_id=IntegerField("Enter the collector's ID", validators=[InputRequired()])
-    route_id=IntegerField("Enter the route ID", validators=[InputRequired()])
+    collector_id=StringField("Enter the collector's ID", validators=[InputRequired()])
+    route_id=StringField("Enter the route ID", validators=[InputRequired()])
     submit = SubmitField('Create')

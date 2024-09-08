@@ -17,13 +17,6 @@
     <!-- Form Section -->
     <form id="assignForm" method="POST" action="{{ url_for('assign_collector') }}" novalidate autocomplete="on">
         {{ form.hidden_tag() }}
-
-        <!-- Company ID Field -->
-        <div class="form-group">
-            {{ form.company_id.label(class="font-weight-bold") }}
-            {{ form.company_id(class="form-control") }}
-        </div>
-
         <!-- Collector ID Field -->
         <div class="form-group">
             {{ form.collector.label(class="font-weight-bold") }}

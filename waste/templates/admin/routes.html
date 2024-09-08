@@ -9,11 +9,6 @@
     <form method="POST" action="{{ url_for('route_register') }}" novalidate>
         {{ form.hidden_tag() }}
         
-        <!-- Company Selection -->
-        <div class="form-group">
-            <label for="{{ form.company.id }}">{{ form.company.label }}</label>
-            {{ form.company(class_="form-control") }}
-        </div>
 
         <!-- Days Selection -->
         <div class="form-group">

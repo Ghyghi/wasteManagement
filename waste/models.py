@@ -5,7 +5,7 @@ from . import db
 
 class HouseUser(db.Model, UserMixin):
     __tablename__ = 'houseuser'
-    house_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    house_id = db.Column(db.String(100), primary_key=True)
     firstname = db.Column(db.String(150), nullable=False)
     secondname = db.Column(db.String(150), nullable=False)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -25,7 +25,7 @@ class HouseUser(db.Model, UserMixin):
 
 class AdminUser(db.Model, UserMixin):
     __tablename__ = 'adminuser'
-    admin_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    admin_id = db.Column(db.String(100), primary_key=True)
     companyname = db.Column(db.String(150), unique=True, nullable=False)
     adminemail = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
@@ -45,10 +45,10 @@ class AdminUser(db.Model, UserMixin):
 
 class CollectorUser(db.Model, UserMixin):
     __tablename__ = 'collectoruser'
-    collector_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    collector_id = db.Column(db.String(100), primary_key=True)
     firstname = db.Column(db.String(150), nullable=False)
     secondname = db.Column(db.String(150), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_company_id'), nullable=False)
+    company_id = db.Column(db.String(100), db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_company_id'), nullable=False)
     collectoremail = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
@@ -66,8 +66,8 @@ class CollectorUser(db.Model, UserMixin):
     
 class Routes(db.Model):
     __tablename__ = 'routes'
-    route_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_profile_adminuser_adminid'), nullable=False)
+    route_id = db.Column(db.String(100), primary_key=True)
+    company_id = db.Column(db.String(100), db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_profile_adminuser_adminid'), nullable=False)
     route_name = db.Column(db.String(255), unique=True, nullable=False)
     pickup_days = db.Column(db.String(255), nullable=False)
     frequency = db.Column(db.String(255), nullable=False)
@@ -79,22 +79,22 @@ class Routes(db.Model):
 
 class RouteAssignment(db.Model):
     __tablename__ = 'routeassignment'
-    pair_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_route_assignment'), nullable=False)
-    collector_id = db.Column(db.Integer, db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_route_pair_assignment'), nullable=False)
-    route_id = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_assisgnment'), nullable=False)
+    pair_id = db.Column(db.String(100), primary_key=True)
+    company_id = db.Column(db.String(100), db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_admin_route_assignment'), nullable=False)
+    collector_id = db.Column(db.String(100), db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_route_pair_assignment'), nullable=False)
+    route_id = db.Column(db.String(100), db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_assisgnment'), nullable=False)
 
 class Schedule(db.Model):
     __tablename__='schedule'
-    schedule_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_schedule'), nullable=False)
-    collector_id = db.Column(db.Integer, db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_schedule'), nullable=False)
-    route_id = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_schedule'), nullable=False, unique=True)
-    house_id = db.Column(db.Integer, db.ForeignKey('houseuser.house_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_schedule'), nullable=False)
+    schedule_id = db.Column(db.String(100), primary_key=True)
+    company_id = db.Column(db.String(100), db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_schedule'), nullable=False)
+    collector_id = db.Column(db.String(100), db.ForeignKey('collectoruser.collector_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_collector_schedule'), nullable=False)
+    route_id = db.Column(db.String(100), db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_schedule'), nullable=False, unique=True)
+    house_id = db.Column(db.String(100), db.ForeignKey('houseuser.house_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_schedule'), nullable=False)
 
 class HouseClient(db.Model):
     __tablename__='houseclient'
-    client_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    house_id = db.Column(db.Integer, db.ForeignKey('houseuser.house_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client'), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client_admin'), nullable=False)
-    route_id = db.Column(db.Integer, db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_client'), nullable=False)
+    client_id = db.Column(db.String(100), primary_key=True)
+    house_id = db.Column(db.String(100), db.ForeignKey('houseuser.house_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client'), nullable=False)
+    company_id = db.Column(db.String(100), db.ForeignKey('adminuser.admin_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_house_client_admin'), nullable=False)
+    route_id = db.Column(db.String(100), db.ForeignKey('routes.route_id', ondelete='CASCADE', onupdate='CASCADE', name='fk_route_id_client'), nullable=False)

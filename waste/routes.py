@@ -6,6 +6,36 @@ from waste import *
 from sqlalchemy import or_, and_
 from waste.mailapi import *
 from functools import wraps
+import random
+import string
+
+def generate_random_admin(length=8):
+    # Define the characters to use for generating the ID
+    characters = string.ascii_letters + string.digits
+    # Generate a random ID with the specified length
+    random_id = ''.join(random.choices(characters, k=length))
+    return random_id
+
+def generate_random_collector(length=7):
+    # Define the characters to use for generating the ID
+    characters = string.ascii_letters + string.digits
+    # Generate a random ID with the specified length
+    random_id = ''.join(random.choices(characters, k=length))
+    return random_id
+
+def generate_random_house(length=9):
+    # Define the characters to use for generating the ID
+    characters = string.ascii_letters + string.digits
+    # Generate a random ID with the specified length
+    random_id = ''.join(random.choices(characters, k=length))
+    return random_id
+
+def generate_random_other(length=6):
+    # Define the characters to use for generating the ID
+    characters = string.ascii_letters + string.digits
+    # Generate a random ID with the specified length
+    random_id = ''.join(random.choices(characters, k=length))
+    return random_id
 
 def flash_message(message, category):
     flash(message, category)
@@ -95,6 +125,7 @@ def register_routes(app):
             companyname = form.companyname.data
             password = form.password.data
             email = form.email.data
+            admin_id= generate_random_admin()
             
             #Check if the user exists
 
@@ -103,7 +134,7 @@ def register_routes(app):
                 flash_message('Company name or email already in use', 'danger')
                 return redirect(url_for('admin_register'))
             else:
-                new_user = AdminUser(companyname = companyname, adminemail = email, password = password, confirmed = False)
+                new_user = AdminUser(admin_id = admin_id, companyname = companyname, adminemail = email, password = password, confirmed = False)
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('A confirmaton email has been sent to you email. Please confirm before you proceed to login,', 'success')
@@ -169,7 +200,7 @@ def register_routes(app):
         return render_template('admin/dashboard.html', routes=routes, company=company)
     
     #Delete admin profile
-    @app.route('/admin/profile/delete/<int:admin_id>', methods=['GET'])
+    @app.route('/admin/profile/delete/<string:admin_id>', methods=['GET'])
     @login_required
     def delete_profile_admin(admin_id):
         admin = AdminUser.query.get(admin_id)
@@ -223,11 +254,12 @@ def register_routes(app):
         form = RoutesForm()
         if form.validate_on_submit():
         
-            company_id = form.company.data
+            company_id = current_user.get_id()
             pickup_days = form.days.data
             district = form.district.data
             sector = form.sector.data
             frequency = form.frequency.data
+            route_id = generate_random_other()
 
             route_name = f"{sector},{district}"
 
@@ -240,7 +272,7 @@ def register_routes(app):
                 flash_message('Route already exists', 'warning')
                 return redirect(url_for('route_register'))
             else:
-                new_route = Routes(company_id=company_id, pickup_days=pickup_days, route_name=route_name, frequency=frequency)
+                new_route = Routes(route_id = route_id, company_id=company_id, pickup_days=pickup_days, route_name=route_name, frequency=frequency)
                 db.session.add(new_route)
                 db.session.commit()
                 flash_message('Route registered successfully,', 'success')
@@ -271,7 +303,7 @@ def register_routes(app):
         return render_template('/admin/pairDetails.html', pair=pair)
     
     #View route details
-    @app.route('/route/view/<int:route_id>', methods=['GET','POST'])
+    @app.route('/route/view/<string:route_id>', methods=['GET','POST'])
     @login_required
     def route_details(route_id):
         route = Routes.query.get_or_404(route_id)
@@ -280,7 +312,7 @@ def register_routes(app):
         return render_template('/admin/routeDetails.html', route=route, collector=collector)
     
     #Delete route
-    @app.route('/route/delete/<int:route_id>', methods=['GET', 'POST'])
+    @app.route('/route/delete/<string:route_id>', methods=['GET', 'POST'])
     @login_required
     @admin_required
     def delete_route(route_id):
@@ -306,7 +338,7 @@ def register_routes(app):
         return redirect(url_for('admin_dashboard'))
     
     #Delete route pair
-    @app.route('/pair/delete/<int:pair_id>', methods=['GET', 'POST'])
+    @app.route('/pair/delete/<string:pair_id>', methods=['GET', 'POST'])
     @login_required
     @admin_required
     def delete_pair(pair_id):
@@ -326,7 +358,7 @@ def register_routes(app):
         return redirect(url_for('admin_dashboard'))
 
     #Update route
-    @app.route('/route/update/<int:route_id>', methods=['GET','POST'])
+    @app.route('/route/update/<string:route_id>', methods=['GET','POST'])
     @login_required
     @admin_required
     def update_route(route_id):
@@ -364,7 +396,7 @@ def register_routes(app):
         return render_template('/admin/collectors.html', users=users, confirmed_users=confirmed_users)
     
     #Confirm collector users
-    @app.route('/admin/confirm_user/<int:user_id>', methods=['POST'])
+    @app.route('/admin/confirm_user/<string:user_id>', methods=['POST'])
     @login_required
     @admin_required
     def confirm_user(user_id):
@@ -394,9 +426,10 @@ def register_routes(app):
     def assign_collector():
         form = AssignmentForm()
         if form.validate_on_submit():
-            company_id = form.company_id.data
+            company_id = current_user.get_id()
             collector = form.collector.data
             route = form.route.data
+            pair_id = generate_random_other()
 
             #Check if the pair exists
             pair = RouteAssignment.query.filter((RouteAssignment.route_id == route)).first()
@@ -405,7 +438,7 @@ def register_routes(app):
                 print('The route has already been assigned')
                 return redirect(url_for('assign_collector'))
             else:
-                new_pair = RouteAssignment(collector_id=collector, company_id=company_id, route_id=route)
+                new_pair = RouteAssignment(pair_id = pair_id, collector_id=collector, company_id=company_id, route_id=route)
                 db.session.add(new_pair)
                 db.session.commit()
                 flash_message('The route has been assigned', 'success')
@@ -424,6 +457,7 @@ def register_routes(app):
             route_id=form.route_id.data
             company_id = current_user.get_id()
             house_clients = HouseClient.query.filter(HouseClient.company_id==company_id).all()
+            schedule_id = generate_random_other()
 
             #Check schedule availability
             existing_schedule=Schedule.query.filter(Schedule.route_id==route_id).first()
@@ -433,7 +467,7 @@ def register_routes(app):
             else:
 
                 for house in house_clients:
-                    new_schedule=Schedule(company_id=company_id, collector_id=collector_id, route_id=route_id, house_id=house.house_id)
+                    new_schedule=Schedule(schedule_id = schedule_id, company_id=company_id, collector_id=collector_id, route_id=route_id, house_id=house.house_id)
                     db.session.add(new_schedule)
                     flash_message('Schedule created.', 'success')
                 db.session.commit()
@@ -454,6 +488,7 @@ def register_routes(app):
             username = form.username.data
             houseemail = form.email.data
             password = form.password.data
+            house_id = generate_random_house()
 
             #Check if the user exists
             existing_user = HouseUser.query.filter((HouseUser.username == username) | (HouseUser.houseemail == houseemail)).first()
@@ -462,7 +497,7 @@ def register_routes(app):
                 flash_message('Username or email already in use. Try again', 'danger')
                 return render_template('house/register.html', form=form)
             else:
-                new_user= HouseUser(firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
+                new_user= HouseUser(house_id = house_id, firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
                 confirm_house(new_user.houseemail)
@@ -522,20 +557,21 @@ def register_routes(app):
         return render_template('house/dashboard.html')
     
     #Join a company
-    @app.route('/house/join/<int:route_id>', methods=['GET'])
+    @app.route('/house/join/<string:route_id>', methods=['GET'])
     @login_required
     def join_route(route_id):
         house_id=current_user.get_id()
         route=route_id
         company=Routes.query.filter(Routes.route_id==route).first()
         company_id=company.company_id
+        client_id = generate_random_other()
 
         existing_client=HouseClient.query.filter_by(house_id=house_id).first()
         if existing_client:
             flash_message('You are already part of this company.', 'danger')
             return redirect(url_for('house_dashboard'))
         else:
-            new_client=HouseClient(house_id=house_id, company_id=company_id, route_id=route)
+            new_client=HouseClient(client_id = client_id, house_id=house_id, company_id=company_id, route_id=route)
             db.session.add(new_client)
             db.session.commit()
             flash_message('You have been registered to this route.', 'success')
@@ -604,6 +640,7 @@ def register_routes(app):
             company_id=form.company_id.data
             password=form.password.data
             collectoremail=form.collectoremail.data
+            collector_id = generate_random_collector()
 
             #Check if the user already exits
             existing_user = CollectorUser.query.filter(CollectorUser.collectoremail==collectoremail, CollectorUser.company_id==company_id).first()
@@ -612,7 +649,7 @@ def register_routes(app):
                 flash_message('User already exists. Try again', 'danger')
                 return redirect(url_for('collector_register'))
             else:
-                new_user = CollectorUser(firstname=firstname, secondname=secondname, company_id=company_id, password=password, collectoremail=collectoremail)
+                new_user = CollectorUser(collector_id = collector_id, firstname=firstname, secondname=secondname, company_id=company_id, password=password, collectoremail=collectoremail)
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('Registration successful.', 'success')
@@ -658,7 +695,7 @@ def register_routes(app):
         return render_template('/collector/update_profile.html', form=form)
     
     #Collector profile delete
-    @app.route('/collector/profile/delete/<int:collector_id>', methods=['GET'])
+    @app.route('/collector/profile/delete/<string:collector_id>', methods=['GET'])
     @login_required
     def delete_profile_collector(collector_id):
         collector = CollectorUser.query.get(collector_id)
