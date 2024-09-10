@@ -102,7 +102,6 @@ class CollectorProfileForm(FlaskForm):
     collectoremail=EmailField('Your email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=50)])
     submit = SubmitField('Update')
-# class ScheduleForm(FlaskForm):
-#     collector_id=StringField("Enter the collector's ID", validators=[InputRequired()])
-#     route_id=StringField("Enter the route ID", validators=[InputRequired()])
-#     submit = SubmitField('Create')
+class ScheduleForm(FlaskForm):
+    date = DateTimeField('Pickup Date', format='%Y-%m-%dT%H:%M', render_kw={"class": "form-control", "id": "date", "required": True})
+    submit = SubmitField('Create Schedule', render_kw={"class": "btn btn-primary"})

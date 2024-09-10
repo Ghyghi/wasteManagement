@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Schedule Pickup</title>
+{% endblock %}
+
+{% block header %}
+    {% include 'admin/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create Trash Pickup Schedule</h2>
+    
+    <form method="POST" action="{{ url_for('create_schedule', route_id=route.route_id) }}">
+        {{ form.hidden_tag() }}
+
+        <!-- Date Input -->
+        <div class="form-group mt-3">
+            {{ form.date.label }}
+            {{ form.date(class="form-control", type="datetime-local", id="date") }}
+            {% if form.date.errors %}
+                <div class="text-danger">
+                    {% for error in form.date.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Submit and Cancel Buttons -->
+        <div class="mt-4">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = ('0' + (now.getMonth() + 1)).slice(-2);
+        const day = ('0' + now.getDate()).slice(-2);
+        const hours = ('0' + now.getHours()).slice(-2);
+        const minutes = ('0' + now.getMinutes()).slice(-2);
+        
+        // Set the minimum date to the current date and time
+        const minDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('date').min = minDate;
+    });
+</script>
+{% endblock %}

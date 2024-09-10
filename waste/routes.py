@@ -5,6 +5,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 from waste import *
 from sqlalchemy import or_, and_
 from waste.mailapi import *
+from datetime import datetime, timedelta
 from functools import wraps
 import random
 import string
@@ -39,6 +40,14 @@ def generate_random_other(length=6):
 
 def flash_message(message, category):
     flash(message, category)
+
+def get_next_weekday(target_weekday):
+    today = datetime.now().date()
+    days_ahead = target_weekday - today.weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    next_weekday = today + timedelta(days_ahead)
+    return next_weekday
 
 def admin_required(f):
     @wraps(f)
@@ -456,6 +465,7 @@ def register_routes(app):
     @login_required
     @admin_required
     def create_schedule(route_id):
+
         # Retrieve route details
         route = Routes.query.filter_by(route_id=route_id).first()
         if not route:
@@ -463,41 +473,46 @@ def register_routes(app):
             flash_message("Route not found.", "danger")
             return redirect(url_for('admin_dashboard'))
         location = route.route_name
-        date = route.pickup_days
-        choice = route.frequency
 
-        # Retrieve assigned company and collector details
-        assigned = RouteAssignment.query.filter_by(route_id=route_id).first()
-        if not assigned:
-            flash_message("No route assignment found for this route.", "danger")
+        form = ScheduleForm()
+        if form.validate_on_submit():
+            date = form.date.data
+            date_str = date.isoformat()
+            choice = route.frequency
+
+            # Retrieve assigned company and collector details
+            assigned = RouteAssignment.query.filter_by(route_id=route_id).first()
+            if not assigned:
+                flash_message("No route assignment found for this route.", "danger")
+                return redirect(url_for('admin_dashboard'))
+            company = assigned.company_id
+            collector = CollectorUser.query.filter_by(company_id=company).first()
+            if not collector:
+                flash("No collector found for this route.", "danger")
+                return redirect(url_for('admin_dashboard'))
+            collector_email = collector.collectoremail
+
+            # Retrieve all house clients associated with the route
+            houses = HouseClient.query.filter_by(route_id=route_id).all()
+
+            # Collect emails of all house users linked to the route
+            house_emails = []
+            for house in houses:
+                house_user = HouseUser.query.filter_by(house_id=house.house_id).first()
+                if house_user:
+                    house_emails.append(house_user.houseemail)
+
+            # Combine collector email with house emails
+            emails = [collector_email] + house_emails
+
+            # Schedule the event and send notifications
+            create_calendar_reminder(emails, location, date_str, choice)
+            summary = "Trash pickup reminder"
+            send_email_notification(emails, summary, location)
+            print('Schedule created successfully')
+            flash_message("Reminders created", 'success')
             return redirect(url_for('admin_dashboard'))
-        company = assigned.company_id
-        collector = CollectorUser.query.filter_by(company_id=company).first()
-        if not collector:
-            flash("No collector found for this route.", "danger")
-            return redirect(url_for('admin_dashboard'))
-        collector_email = collector.collectoremail
-
-        # Retrieve all house clients associated with the route
-        houses = HouseClient.query.filter_by(route_id=route_id).all()
-
-        # Collect emails of all house users linked to the route
-        house_emails = []
-        for house in houses:
-            house_user = HouseUser.query.filter_by(house_id=house.house_id).first()
-            if house_user:
-                house_emails.append(house_user.houseemail)
-
-        # Combine collector email with house emails
-        emails = [collector_email] + house_emails
-
-        # Schedule the event and send notifications
-        create_calendar_reminder(emails, location, date, choice)
-        summary = "Trash pickup reminder"
-        send_email_notification(emails, summary, location)
-        print('Schedule created successfully')
-        flash_message("Reminders created", 'success')
-        return redirect(url_for('admin_dashboard'))
+        return render_template('/admin/schedule_form.html', form=form, route=route)
     
     ########### House APIs##################################################
     
