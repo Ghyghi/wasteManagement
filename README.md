@@ -2,7 +2,8 @@
 
 ## Overview
 
-This project is a Smart Waste Management System built with Flask. It allows users to manage waste collection schedules, track recycling efforts, and view environmental impact metrics.
+This project is a Smart Waste Management System built with Flask. <br/>
+It allows users to manage waste collection schedules, track recycling efforts, and view environmental impact metrics.
 
 ## Features
 
@@ -43,24 +44,33 @@ This project is a Smart Waste Management System built with Flask. It allows user
     ```bash
     pip install -r requirements.txt
     ```
-    If this gives you an error try "pip3"
+    OR
+   ```bash
+    pip3 install -r requirements.txt
+    ```
 
-4. Configure the database in `app/config.py`. Create the MySQL database and name it "Smart".
+5. Configure the database in `app/config.py`. Create the MySQL database and name it "Smart".
 
-5. Add the necessary Google api credentials:
-- Throught the Google Cloud Console enable the Gmail and Calendar apis.
+6. Add the necessary Google API credentials:
+- Through the Google Cloud Console enable the Gmail and Calendar APIs.
 - Download the credentials file and rename it "credentials.json"
 - Save the credentials file in your virtual environment folder
 - Set up environmental variables: SECRET_KEY, ENV_FOLDER, and API_KEY. Assign them their corresponding values.
 - Add a __main__ function to the mailapi.py file and test it by running:
-    '''bash
+    ```bash
     python waste/mailapi.py
-    '''
-    If this gives you an error try "python3"
+    ```
+    OR
+    ```bash
+    python3 waste/mailapi.py
+    ```
 This will allow Google to verify your application.
 
 6. Run the application:
     ```bash
     python run.py
     ```
-    If this gives you an error try "python3"
+    OR
+   ```bash
+    python3 run.py
+    ```
