@@ -12,11 +12,11 @@ This project is a Smart Waste Management System built with Flask. It allows user
 
 ## Functionalities
 
-User Registration and Login
-Waste Collection Schedule
-Waste Collection Services Management
-Admin Dashboard
-Admin Confirms Collectors
+- User Registration and Login
+- Waste Collection Schedule
+- Waste Collection Services Management
+- Admin Dashboard
+- Admin Confirms Collectors
 
 
 ## Setup
