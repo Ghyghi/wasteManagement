@@ -49,49 +49,51 @@ It allows users to manage waste collection schedules, track recycling efforts, a
     pip3 install -r requirements.txt
     ```
 
-5. Configure the database in `app/config.py`. Create the MySQL database and name it "Smart".
+5. Configure the database in `app/config.py`.
+    Create the MySQL database and name it "Smart".
 
 6. Add the necessary Google API credentials:
-- Through the Google Cloud Console enable the Gmail and Calendar APIs.
-- Download the credentials file and rename it "credentials.json"
-- Save the credentials file in your virtual environment folder
-- Set up environmental variables: SECRET_KEY, ENV_FOLDER, and API_KEY. Assign them their corresponding values.
-- Add a __main__ function to the mailapi.py file :<br/>
-e.g:
-```
-if __name__=="__main__":
-    get_credentials()
-    get_gmail_service()
-    get_calendar_service()
-    email='youremail@gmail.com'
-    subject='Test Email'
-    html_content='This is a test'
-    send_email(email, subject, html_content)
-    user_emails =['email1@gmail.com', 'email2@gmail.com.com']
-    summary = 'remainder'
-    user_location = 'location'
-    startdate = 'any datetime'
-    user_choice = 'weekly'
-    create_calendar_reminder(user_emails, user_location, startdate, user_choice)
-    send_email_notification(user_emails, summary)
-```
-- Make the necessary changes to make sure that you receive the test emails
-- Test it by running: <br/>
-```bash
-python waste/mailapi.py
-```
-OR
-```bash
-python3 waste/mailapi.py
-```
-- When prompted, please select the Google account you want to be associated with your application. <br/>
-This will allow Google to verify your application.
+    - Through the Google Cloud Console enable the Gmail and Calendar APIs.
+    - Download the credentials file and rename it "credentials.json"
+    - Save the credentials file in your virtual environment folder
+    - Set up environmental variables: SECRET_KEY, ENV_FOLDER, and API_KEY. Assign them their corresponding values.
+    - Add a __main__ function to the mailapi.py file :
+    <br/>
+    e.g:
+    ```
+    if __name__=="__main__":
+        get_credentials()
+        get_gmail_service()
+        get_calendar_service()
+        email='youremail@gmail.com'
+        subject='Test Email'
+        html_content='This is a test'
+        send_email(email, subject, html_content)
+        user_emails =['email1@gmail.com', 'email2@gmail.com.com']
+        summary = 'remainder'
+        user_location = 'location'
+        startdate = 'any datetime'
+        user_choice = 'weekly'
+        create_calendar_reminder(user_emails, user_location, startdate, user_choice)
+        send_email_notification(user_emails, summary)
+    ```
+    - Make the necessary changes to make sure that you receive the test emails
+    - Test it by running: <br/>
+    ```bash
+    python waste/mailapi.py
+    ```
+    OR
+    ```bash
+    python3 waste/mailapi.py
+    ```
+    - When prompted, please select the Google account you want to be associated with your application. <br/>
+    This will allow Google to verify your application.
 
-6. Run the application:
-```bash
-python run.py
-```
-OR
-```bash
-python3 run.py
-```
+7. Run the application:
+    ```bash
+    python run.py
+    ```
+    OR
+    ```bash
+    python3 run.py
+    ```
