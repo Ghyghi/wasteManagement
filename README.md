@@ -138,7 +138,6 @@ Contributions are welcome! Please follow these steps:
 
 ## License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0). You are free to share and adapt the material for non-commercial purposes. For more details, see the [LICENSE](LICENSE) file.
-
+This project is licensed under the GNU GENERAL PUBLIC LICENSE (Version 3, 29 June 2007).  Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed. For more details, see the [LICENSE](LICENSE) file.
 
 This Markdown file now provides a complete and detailed guide to setting up, using, and contributing to the Smart Waste Web Application.
