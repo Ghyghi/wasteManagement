@@ -20,7 +20,7 @@ It allows users to manage waste collection schedules, track recycling efforts, a
 
 ## Prerequisites
 
-- Python 3.10 or higher
+- Python 3.10 or higher(Python 3.12.3 is recommended)
 - Flask
 - MySQL
 - Google API credentials for Gmail and Calendar
