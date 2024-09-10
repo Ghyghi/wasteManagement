@@ -67,18 +67,18 @@ def confirm_token(token, expiration=3600):
 
 from waste.mailapi import send_email
 
-def confirm_admin(user_email):
+def confirm_admin(user_email, user_name):
     token = generate_confirmation_token(user_email)
     confirm_url = url_for('confirm_email', token=token, _external=True)
-    html = render_template('email/companyActivate.html', confirm_url=confirm_url)
+    html = render_template('email/companyActivate.html', confirm_url=confirm_url, user_name=user_name)
     send_email(user_email, 'Please confirm your email', html)
 
-def confirm_house(user_email):
+def confirm_house(user_email, user_name):
     token = generate_confirmation_token(user_email)
     confirm_url = url_for('confirm_email_house', token=token, _external=True)
-    html = render_template('email/houseActivate.html', confirm_url=confirm_url)
+    html = render_template('email/houseActivate.html', confirm_url=confirm_url, user_name=user_name)
     send_email(user_email, 'Please confirm your email', html)
 
-def confirmed_user(user_email):
-    html = render_template('email/adminActivate.html')
+def confirmed_user(user_email, name):
+    html = render_template('email/adminActivate.html', name=name)
     send_email(user_email, 'You are now a verified user.', html)

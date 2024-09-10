@@ -7,23 +7,23 @@ This project is a Smart Waste Management System built with Flask. It allows user
 ## Features
 
 - Schedule waste collection
-- Track recycling efforts
-- View environmental impact metrics
+- Join a collection route
+
 
 ## Functionalities
 
 User Registration and Login
 Waste Collection Schedule
-Recycling Tracker
 Waste Collection Services Management
 Admin Dashboard
+Admin Confirms Collectors
 
 
 ## Setup
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/smart_waste_management.git
+    git clone https://github.com/Ghyghi/wasteManagement.git
     cd smart_waste_management
     ```
 
@@ -45,17 +45,22 @@ Admin Dashboard
     ```
     If this gives you an error try "pip3"
 
-4. Configure the database in `app/config.py`.
+4. Configure the database in `app/config.py`. Create the MySQL database and name it "Smart".
 
-5. Run the application:
+5. Add the necessary Google api credentials:
+- Throught the Google Cloud Console enable the Gmail and Calendar apis.
+- Download the credentials file and rename it "credentials.json"
+- Save the credentials file in your virtual environment folder
+- Set up environmental variables: SECRET_KEY, ENV_FOLDER, and API_KEY. Assign them their corresponding values.
+- Add a __main__ function to the mailapi.py file and test it by running:
+    '''bash
+    python waste/mailapi.py
+    '''
+    If this gives you an error try "python3"
+This will allow Google to verify your application.
+
+6. Run the application:
     ```bash
     python run.py
     ```
     If this gives you an error try "python3"
-
-## Testing
-
-Run the tests with:
-```bash
-pytest
-```

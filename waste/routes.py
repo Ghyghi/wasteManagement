@@ -138,7 +138,7 @@ def register_routes(app):
                 db.session.add(new_user)
                 db.session.commit()
                 flash_message('A confirmaton email has been sent to you email. Please confirm before you proceed to login,', 'success')
-                confirm_admin(email)
+                confirm_admin(email, companyname)
                 return redirect(url_for('admin_login'))
         return render_template('admin/register.html', form=form)
     
@@ -403,7 +403,7 @@ def register_routes(app):
         user = CollectorUser.query.get_or_404(user_id)
         user.confirmed = True
         db.session.commit()
-        confirmed_user(user.collectoremail)
+        confirmed_user(user.collectoremail, user.firstname)
         flash_message('User confirmed successfully.', 'success')
         return redirect(url_for('company_collectors'))
     
@@ -520,7 +520,7 @@ def register_routes(app):
                 new_user= HouseUser(house_id = house_id, firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
-                confirm_house(new_user.houseemail)
+                confirm_house(new_user.houseemail, username)
                 flash_message('A confirmation email has been sent via email. Please confirm your email to log in.', 'success')
                 return redirect(url_for('login'))
             
