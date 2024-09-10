@@ -65,18 +65,23 @@ def register_routes(app):
     def home():
         return render_template('index.html')
     
-    #Re-send Confirmation Email
+    # Re-send Confirmation Email
     @app.route('/resend_confirmation', methods=['GET', 'POST'])
     def resend_confirmation():
         form = ResendConfirmationForm()
         if form.validate_on_submit():
             email = form.email.data
-            admin_user = AdminUser.query.filter(adminemail=email).first()
-            house_user = HouseUser.query.filter(houseemail=email).first()
+
+            # Query for unconfirmed admin user and house user accounts
+            admin_user = AdminUser.query.filter_by(adminemail=email, confirmed=False).first()
+            house_user = HouseUser.query.filter_by(houseemail=email, confirmed=False).first()
+
+            # Combine users into a list for further processing
             users = [admin_user, house_user]
             
+            # Check if there is an unconfirmed user and resend confirmation email
             for user in users:
-                if user and not user.confirmed:
+                if user:
                     if isinstance(user, AdminUser):
                         confirm_admin(user.adminemail)
                     elif isinstance(user, HouseUser):
@@ -88,7 +93,7 @@ def register_routes(app):
                     break
             else:
                 flash_message('Email not found or already confirmed.', 'danger')
-        
+
         return render_template('resend_confirmation.html', form=form)
     
     #Forgot Password Route
@@ -520,7 +525,7 @@ def register_routes(app):
                 new_user= HouseUser(house_id = house_id, firstname=firstname, secondname=secondname, username=username, houseemail=houseemail, password=password, confirmed=False)
                 db.session.add(new_user)
                 db.session.commit()
-                confirm_house(new_user.houseemail, username)
+                confirm_house(new_user.houseemail, new_user.username)
                 flash_message('A confirmation email has been sent via email. Please confirm your email to log in.', 'success')
                 return redirect(url_for('login'))
             
