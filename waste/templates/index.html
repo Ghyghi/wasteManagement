@@ -1,15 +1,18 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 {% block head %}
 <title>Home</title>
 <style>
     body {
         margin-top: 20px;
+        font-family: Arial, sans-serif;
+        color: #333;
     }
 
     .feature-title {
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 20px;
+        color: #0056b3;
     }
 
     #home {
@@ -29,6 +32,9 @@
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1rem;
     }
 
     .button-blue:hover {
@@ -40,6 +46,7 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
     }
 
     .user-type {
@@ -47,11 +54,31 @@
         padding: 20px;
         border: 1px solid #e0e0e0;
         border-radius: 8px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .user-type:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-type a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .user-type a:hover {
+        text-decoration: underline;
     }
 
     @media (max-width: 992px) {
         .mb-4 {
             margin-bottom: 1.5rem !important;
+        }
+        .row {
+            flex-direction: column;
+        }
+        .col-md-4 {
+            margin-bottom: 20px;
         }
     }
 </style>
@@ -63,9 +90,7 @@
         <h1 class="feature-title">Smart Waste Collector</h1>
         <p>The smart way to schedule your waste collection</p>       
         <div>
-            <form action="/resend_confirmation">
-                <button class="button button-blue">Resend Confirmation</button>
-            </form>
+            <a href="/resend_confirmation" class="button-blue">Resend Confirmation</a>
         </div>
     </div>
 </section>

@@ -16,19 +16,65 @@
 
         <!-- Email Input -->
         <div class="form-group">
-            {{ form.collectoremail.label }}
+            {{ form.collectoremail.label(class="form-label") }}
             {{ form.collectoremail(class="form-control", placeholder="Enter your email") }}
             <div class="invalid-feedback">Please enter a valid email address.</div>
         </div>
 
         <!-- Password Input -->
         <div class="form-group">
-            {{ form.password.label }}
+            {{ form.password.label(class="form-label") }}
             {{ form.password(class="form-control", placeholder="Enter your new password") }}
             <div class="invalid-feedback">Please enter your password.</div>
         </div>
 
-        {{ form.submit(class="btn btn-primary") }}
+        {{ form.submit(class="btn btn-primary btn-block") }}
     </form>
 </div>
 {% endblock %}
+
+<style>
+    .container {
+        max-width: 600px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 0.375rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #0693e3;
+        box-shadow: 0 0 0 0.2rem rgba(6, 147, 227, 0.25);
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background-color: #0693e3;
+        border-color: #0693e3;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0577c0;
+        border-color: #0577c0;
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+</style>

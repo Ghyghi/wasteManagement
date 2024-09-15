@@ -41,36 +41,60 @@
 
 <style>
     .routes-table-container {
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: #ffffff;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        max-width: 800px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        max-width: 90%;
         margin: 2rem auto;
+        font-family: 'Arial', sans-serif;
     }
+    
     h1 {
         text-align: center;
-        color: #0693e3;
-        margin-bottom: 1rem;
+        color: #007bff;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        font-weight: 600;
     }
+    
     .routes-table {
         width: 100%;
         border-collapse: collapse;
     }
+    
     .routes-table th, .routes-table td {
-        padding: 0.75rem;
+        padding: 1rem;
         border: 1px solid #ddd;
         text-align: left;
+        font-size: 1rem;
     }
+    
     .routes-table th {
-        background-color: #0693e3;
+        background-color: #007bff;
         color: white;
+        font-size: 1.1rem;
     }
+    
     .routes-table tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
+        background-color: #f9f9f9;
     }
+    
     .routes-table tbody tr:hover {
-        background-color: #e2e2e2;
+        background-color: #e0e0e0;
+    }
+    
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+        .routes-table-container {
+            padding: 1rem;
+            max-width: 100%;
+        }
+
+        .routes-table th, .routes-table td {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 {% endblock %}

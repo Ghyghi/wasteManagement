@@ -58,7 +58,7 @@ class HouseRegisterForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     email = EmailField('Email', validators=[InputRequired()])
-    submit = SubmitField('Register')
+    submit = SubmitField('Submit')
 class HouseLoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=25)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])

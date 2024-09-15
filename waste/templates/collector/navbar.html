@@ -10,7 +10,7 @@
 <style>
     nav {
         background-color: #0693e3;
-        padding: 1rem;
+        padding: 0.5rem 1rem;
         color: white;
     }
     .nav-list {
@@ -29,10 +29,14 @@
         font-size: 1rem;
         padding: 0.5rem 1rem;
         border-radius: 4px;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, transform 0.2s;
     }
     .nav-list a:hover,
     .nav-list a.active {
         background-color: #0577c0;
+        transform: scale(1.05);
+    }
+    .nav-list a.active {
+        font-weight: bold;
     }
 </style>

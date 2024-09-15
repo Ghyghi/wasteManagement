@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>House Profile</title>
+{% endblock %}
+
+{% block header %}
+    {% include 'house/navbar.html' %}
+    <style>
+        section {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            color: #343a40;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        section.actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <section>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>House Information</h3>
+                <p><strong>First Name:</strong> {{ info.firstname }}</p>
+                <p><strong>Second Name:</strong> {{ info.secondname }}</p>
+                <p><strong>Username:</strong> {{ info.username }}</p>
+                <p><strong>House ID:</strong> {{ info.house_id }}</p>
+                <p><strong>Email:</strong> {{ info.houseemail }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Route Information</h3>
+                <p><strong>Route ID:</strong> {{ regcompany.route.route_id }}</p>
+                <p><strong>Route Name:</strong> {{ regcompany.route.route_name }}</p>
+                <p><strong>Company Name:</strong> {{ regcompany.admin_user.companyname }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="actions">
+        <h3>Actions</h3>
+        <a href="{{ url_for('update_profile_house') }}" class="btn btn-primary">
+            Update Profile
+        </a>
+        <a href="{{ url_for('delete_profile_house', house_id=info.house_id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this profile? This action cannot be undone.');">
+            Delete Profile
+        </a>
+    </section>
+</div>
+{% endblock %}

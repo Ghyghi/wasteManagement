@@ -617,6 +617,80 @@ def register_routes(app):
             flash_message('You have been registered to this route.', 'success')
         return redirect(url_for('view_provider'))
     
+    # Leave a company
+    @app.route('/house/leave/<string:route_id>', methods=['GET'])
+    @login_required
+    def leave_route(route_id):
+        house_id = current_user.get_id()
+
+        # Find the route and the company associated with it
+        route = Routes.query.filter(Routes.route_id == route_id).first()
+
+        if route:
+            company_id = route.company_id
+
+            # Check if the user is already part of the company
+            existing_client = HouseClient.query.filter_by(house_id=house_id, company_id=company_id, route_id=route_id).first()
+
+            if existing_client:
+                # Remove the user from the company
+                db.session.delete(existing_client)
+                db.session.commit()
+                flash_message('You have successfully left the route.', 'success')
+            else:
+                flash_message('You are not part of this route.', 'danger')
+        else:
+            flash_message('Route not found.', 'danger')
+
+        return redirect(url_for('house_dashboard'))
+    
+    #View house profile
+    @app.route('/house/profile', methods=['GET'])
+    @login_required
+    def house_profile():
+        user = current_user.get_id()
+        info = HouseUser.query.filter_by(house_id = user).first()
+        regcomp = HouseClient.query.filter(HouseClient.house_id==user).first()
+        return render_template('/house/viewProfile.html', info=info, regcompany=regcomp)
+    
+    #Update house profile
+    @app.route('/house/profile/update', methods=['GET', 'POST'])
+    @login_required
+    def update_profile_house():
+        house_id=current_user.get_id()
+        user=HouseUser.query.get(house_id)
+        form=HouseRegisterForm(obj=user)
+        if form.validate_on_submit():
+            user.firstname=form.firstname.data
+            user.secondname=form.secondname.data
+            user.houseemail=form.email.data
+            user.username=form.username.data
+
+            try:
+                db.session.commit()
+                flash_message('Profile updated successfully.', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash_message(f'Error updating profile: {e}', 'danger')
+
+            return redirect(url_for('house_dashboard'))
+        return render_template('/house/updateProfile.html', form=form)
+    
+    #Delete house profile
+    @app.route('/house/profile/delete/<string:house_id>', methods=['GET'])
+    @login_required
+    def delete_profile_house(house_id):
+        house = HouseUser.query.get(house_id)
+        if house:
+            db.session.delete(house)
+            db.session.commit()
+            
+            flash_message('House profile deleted successfully!', 'success')
+            return redirect(url_for('home'))
+        
+        flash_message('House not found.', 'danger')
+        return redirect(url_for('house_dashboard'))
+    
     #View the company you belong to
     @app.route('/house/my-provider', methods=['GET'])
     @login_required
